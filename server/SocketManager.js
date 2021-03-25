@@ -18,27 +18,27 @@ module.exports = function(socket) {
         }
     })
     socket.on(COMMUNITY_CHAT, (data) => {
-        io.io.emit(COMMUNITY_CHAT, data)
+        console.log(connectedUsers)
+    
+        io.io.to(connectedUsers[data.reciever]).emit(COMMUNITY_CHAT, data)
+        // io.io.emit(COMMUNITY_CHAT, data)
     })
     socket.on(USER_CONNECTED, (user) => {
-        connectedUsers = addUser(connectedUsers, user); 
-        socket.user = user; 
-        // console.log(i)
+        connectedUsers = addUser(connectedUsers, {user, id: socket.id}); 
+        console.log(connectedUsers)
+        socket.user = user;
         io.io.emit(USER_CONNECTED, connectedUsers)
-        // console.log(connectedUsers);
     })
     // verify Username
 }
 
 function addUser(userList, user) {
-    console.log(user)
     let newList = Object.assign({}, userList)
-    newList[user.name] = user
+    newList[user.user] = user.id
     return newList; 
 }
 
 function removeUser(userList, username) {
-
     let newList = Object.assign({}, userList)
     delete newList[username]; 
     return newList
