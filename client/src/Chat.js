@@ -15,20 +15,18 @@ class Chat extends React.Component {
         super(props)
     
         this.state = {
-            sended: [], 
-            message: ''
+            message: '', 
+            sended: []
         }   
-
     }
-    
 
     handleSubmit = (e) => {
         e.preventDefault(); 
-    }
-    addMessage = () => {
+        this.setState((prevstate) => ({sended: [...prevstate.sended, prevstate.message]}))
         this.props.sendMessage(this.state.message)
-        this.setState({ message: ""})
+        this.setState({message: ""})
     }
+
     render() {
         return (
             <div className = "chat" >
@@ -57,7 +55,7 @@ class Chat extends React.Component {
                 </div>  
 
                 <div className = "chat__body">
-                   <Message message = {this.props.message}/>
+                   <Message message = {this.props.message} sended = {this.state.sended}/>
                 </div>
 
                 <div className = "chat__footer">
@@ -67,7 +65,7 @@ class Chat extends React.Component {
                     <form onSubmit = {this.handleSubmit}>
                         <input value = {this.state.message}  onChange = {(e) => this.setState({message: e.target.value})} placeholder = "Type a message" type = "text">
                         </input>
-                            <button onClick = {this.addMessage}  type = "submit"></button>
+                            <button  type = "submit"></button>
                     </form> 
                     <IconButton>
                         <MicNoneIcon />

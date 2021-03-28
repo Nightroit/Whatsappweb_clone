@@ -24,19 +24,8 @@ class Sidebar extends React.Component {
         console.log(e);
     }
     render() {
-        const data = [{
-            "name": "Shivam",
-            "lastMessage": "Hi there!" }, 
-            {
-                "name": "Jeff Bezos", 
-                "phone_number": "9999999999",
-                "lastMessage" : "Customer Obsession", 
-            }, {
-                "name" : "Elon Musk", 
-                "phone_number": "8888888888",
-                "lastMessage" : "WorkLike Hell",
-            }
-        ]
+        // console.log(this.props.message)
+
     return (
         <div className = "sidebar">
 
@@ -70,7 +59,7 @@ class Sidebar extends React.Component {
 
             <button onClick = {this.fetchMessage} >Clicked</button>
             <div className = "sidebar__chats">
-                {data.map(e =>  <SidebarChat onClick = {() => {this.fetchMessage(e['phone_number'])}} contact = {e}/> )}
+                {this.props.users.map(e =>  <SidebarChat onClick = {() => {this.props.changeUser(e)}} contact = {e}/> )}
             </div>
 
         </div>
