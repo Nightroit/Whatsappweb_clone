@@ -7,4 +7,8 @@ module.exports = {
     TYPING:"TYPING", 
     VERIFY_USER:"VERIFY_USER", 
     LOGOUT:"LOGOUT", 
+    DATA_REQ: "DATA_REQ", 
+    LOAD_USERS: "LOAD_USERS", 
+    SEND_MESSAGE: "SEND_MESSAGE", 
+    DATA_REQ: "DATA_REQ" 
 }

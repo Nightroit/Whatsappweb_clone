@@ -6,7 +6,6 @@ import AttachFileIcon from '@material-ui/icons/AttachFile';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import MoodIcon from '@material-ui/icons/Mood';
 import MicNoneIcon from '@material-ui/icons/MicNone';
-import axios from "./axios";
 import Message from './components/Message';
 
     
@@ -22,7 +21,7 @@ class Chat extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault(); 
-        this.setState((prevstate) => ({sended: [...prevstate.sended, prevstate.message]}))
+      
         this.props.sendMessage(this.state.message)
         this.setState({message: ""})
     }

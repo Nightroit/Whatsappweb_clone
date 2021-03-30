@@ -12,19 +12,7 @@ import SidebarChat from './SidebarChat';
 
 
 class Sidebar extends React.Component {
-    constructor(props) {
-        super(props)
-    
-        this.state = {
-             
-        }
-        this.fetchMessage = this.fetchMessage.bind(this); 
-    }
-    fetchMessage(e) {
-        console.log(e);
-    }
     render() {
-        // console.log(this.props.message)
 
     return (
         <div className = "sidebar">

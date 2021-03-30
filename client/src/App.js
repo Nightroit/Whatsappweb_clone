@@ -1,11 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {COMMUNITY_CHAT, USER_CONNECTED} from './utils/Events'
+import React from 'react';
+import {COMMUNITY_CHAT, DATA_REQ, USER_CONNECTED} from './utils/Events'
+import {connect} from 'react-redux'; 
 import './App.css';
 import Chat from './Chat';
 import Sidebar from './Sidebar';
-import axios from './axios'; 
 import socket from './utils/socket'
-import { IconButton } from '@material-ui/core';
+import * as actions from './actions/index'
+
 class App extends React.Component {
 
   constructor(props) {
@@ -24,46 +25,48 @@ class App extends React.Component {
 
   componentDidMount() {
     socket.on('connect', () => {
+      console.log("Socket io connected"); 
     })   
-    socket.on(COMMUNITY_CHAT, (msg) => {
-      console.log(msg)
-      let newData = this.state.data; 
-      newData[msg.reciever]["msg"][msg.sender].push(msg.msg)
-      this.setState({data: newData})
-    })
-    socket.on("DATA_RES", (data) => {
-      this.setState({
-        reciever: data[this.state.name]["connections"][0].name
-      })
-      console.log(this.state.reciever); 
-      this.setState({
-        name_val: this.state.name, 
-        message: data[this.state.name]["msg"][this.state.reciever], 
-        loaded: true, 
-        data: data,
-      })
-      console.log(this.state.data)
-    })
+    // socket.on(COMMUNITY_CHAT, (msg) => {
+    //   let newData = this.state.data; 
+    //   this.setState((prevState) => ({data: newData, message: [...prevState.message, msg] }))
+    // })
+    // socket.on(DATA_REQ, (data) => {
+    //   this.setState({
+    //     reciever: data[this.state.name]["connections"][0].name
+    //   })
+    //   this.setState({
+    //     name_val: this.state.name, 
+    //     message: data[this.state.name]["msg"][this.state.reciever], 
+    //     loaded: true, 
+    //     data: data,
+    //   })
+    // })
   }
 
-  sendMessage = (msg) => {
-    // console.log(object)
-    let data = {msg, reciever: this.state.reciever, sender: this.state.name_val}
-    socket.emit(COMMUNITY_CHAT, data)
-  }
+  // sendMessage = (msg) => {
+  //   let data = {msg, reciever: this.state.reciever, sender: this.state.name_val}
+  //   socket.emit(COMMUNITY_CHAT, data)
+  //   this.setState((prevState) => ({
+  //       message: [...prevState.message, data]
+  //   }))
+  //   console.log(this.state.message); 
+  // }
 
   handleSubmit = (e) =>  {
     e.preventDefault();
-    socket.emit(USER_CONNECTED, this.state.name)
-  }
-
-  changeUser = (e) => { 
-      this.setState((prevState) => ({
-      message: prevState.data[prevState.name]["msg"][e.name], 
-      reciever: e.name
-    }))
+    this.props.actions.loadUsers(this.state.name, this.props.dispatch); 
+    // socket.emit(USER_CONNECTED, this.state.name)
     
   }
+
+  // changeUser = (e) => { 
+  //     this.setState((prevState) => ({
+  //     message: prevState.data[prevState.name]["msg"][e.name], 
+  //     reciever: e.name
+  //   }))
+    
+  // }
   render() {
 
   return (
@@ -94,7 +97,11 @@ class App extends React.Component {
 }
 }
 
-export default App;
+const mapStateToProps = (state) => ({state})
+
+const mapDispatchToProps = (dispatch) => ({dispatch, actions})
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
 
 {/*<h1>Jai Shri Ram</h1>
 <h1>Mahabali hanuman</h1>*/}

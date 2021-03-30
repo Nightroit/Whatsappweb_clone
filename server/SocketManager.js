@@ -1,44 +1,34 @@
 const io = require('./index.js')
 
-const { VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT } = require('../client/src/utils/Events')
+const { VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ } = require('../client/src/utils/Events')
 
 const { createUser, createMessage, createChat } = require('../client/src/utils/Factories')
 
 var connectedUsers = {
-    "Shivam": {
-        msg:{
-                "Divyank": ["Hi", "I'll do that%"],
-                "Dhurba": ["Hi", "How are you", "I'm good"] 
-            },
-        connections: [      {
-            "name": "Divyank", 
-            "phone_number": "9999999999",
-            "lastMessage" : "Oh, really xd", 
-        }, {
-            "name" : "Dhurba", 
-            "phone_number": "8888888888",
-            "lastMessage" : "No idea",
-        }], 
-        id: "", 
-    },
-    "Dhurba" : {
-        msg: {
-            "Shivam": ["Hi", "How are you", "I'm good"] 
+    users: {
+        "Shivam": {
+            connections: ["Dhurba", "Divyank"], 
+            socketId: '', 
         }, 
-        connections: [{
-            "name": "Shivam", 
-            "phone_number": "8076300121", 
-            "lastMessage": "Jeff"
-        }]
-    },
-    "Divyank" : {
-        msg: {
-            "Shivam": ["Hi", "I'll do that%"]
+        "Dhurba": {
+            connections: ["Prateek", "Ritesh"], 
+            socketId: '', 
         }, 
-        connections: [{
-            "name" : "Shivam", 
-            "lastMessage": "Okay, I'll send email..."
-        }]
+        "Divyank": {
+            connections: ["Shivam"],
+            socketId: '', 
+        }
+    },
+    messages: {
+        // In future will make address this using hashing, just for the sake of JUGAAD rn ;P
+        "ShivamDivyank": [
+            {msg: "Hi, Divyank", reciever: "Divyank", sender: "Shivam", messageId: 1},
+            {msg: "Hi, Shivam", reciever: "Shivam", sender: "Divyank", messageId: 2}
+                        ], 
+        "ShivamDhurba": [
+            {msg: "Hi, Dhurba", reciever: "Dhurba", sender: "Shivam", messageId: 1},
+            {msg: "Hi, Shivam", reciever: "Shivam", sender: "Dhurba", messageId: 2}
+        ]
     }
 }
 
@@ -53,21 +43,30 @@ module.exports = function(socket) {
         }
     })
     socket.on(COMMUNITY_CHAT, (data) => {
-        console.log(data)
-        io.io.to(connectedUsers[data.reciever]["id"]).emit(COMMUNITY_CHAT, data)
-        // io.io.emit(COMMUNITY_CHAT, data)
+        io.io.to(connectedUsers[data.reciever]["id"]).emit(COMMUNITY_CHAT, data);
+        addMessage(data)
+        
     })
     socket.on(USER_CONNECTED, (name) =>  {
         connectedUsers = updateId({name, id: socket.id}); 
-        socket.emit("DATA_RES", connectedUsers)
-        
+        socket.emit(DATA_REQ, connectedUsers)
     })
-    // verify Username
-}
+
+    // Request for Data
+    socket.on(DATA_REQ, (name, fn) => {
+        fn(connectedUsers.users[name].connections)
+        // socket.emit(DATA_REQ, connectedUsers); 
+    })
 
 function updateId(user) {
     connectedUsers[user.name]["id"] = user.id;
     return connectedUsers;
+}
+
+function addMessage(data) {
+    connectedUsers[data.reciever]["msg"][data.sender].push(data);
+    connectedUsers[data.sender]["msg"][data.reciever].push(data);
+
 }
 
 function removeUser(userList, username) {
@@ -79,4 +78,5 @@ function removeUser(userList, username) {
 
 function isUser(userList, username) {
     return username in userList;
+}
 }
