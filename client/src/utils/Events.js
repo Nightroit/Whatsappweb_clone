@@ -10,5 +10,7 @@ module.exports = {
     DATA_REQ: "DATA_REQ", 
     LOAD_USERS: "LOAD_USERS", 
     SEND_MESSAGE: "SEND_MESSAGE", 
-    DATA_REQ: "DATA_REQ" 
+    DATA_REQ: "DATA_REQ", 
+    LOAD_MESSAGES: "LOAD_MESSAGES", 
+    UPDATE_DB: "UPDATE_DB"
 }

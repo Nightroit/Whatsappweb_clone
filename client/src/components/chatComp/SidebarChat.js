@@ -16,8 +16,8 @@ class SidebarChat extends React.Component {
             <div className = "sidebarChat" onClick = {this.props.onClick}>
             <Avatar />
                 <div className = "sidebarChat__info">
-                    <h2>{this.props.contact.name}</h2>
-                    <p>{this.props.contact.lastMessage}</p>
+                    <h2>{this.props.contact}</h2>
+                    {/* <p>{this.props.contact.lastMessage}</p> */}
                 </div>
            
         </div>

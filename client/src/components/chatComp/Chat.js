@@ -54,7 +54,12 @@ class Chat extends React.Component {
                 </div>  
 
                 <div className = "chat__body">
-                   <Message message = {this.props.message} sended = {this.state.sended}/>
+                    {this.props.message.map(e => {
+                    return      <Message
+                                name = {this.props.name} 
+                                message = {e} 
+                                sended = {this.state.sended}/>
+                                })}
                 </div>
 
                 <div className = "chat__footer">

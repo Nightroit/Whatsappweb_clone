@@ -1,8 +1,5 @@
 const io = require('./index.js')
-
-const { VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES } = require('../client/src/utils/Events')
-
-const { createUser, createMessage, createChat } = require('../client/src/utils/Factories')
+const { VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES, UPDATE_DB } = require('./constants/index')
 
 var connectedUsers = {
     users: {
@@ -32,38 +29,51 @@ var connectedUsers = {
 }
 
 
-function socket(socket){
+function socket(socket) {
     socket.on(VERIFY_USER, (nickname, callback) => {
         if(isUser(connectedUsers, nickname)) {
             callback({isUser: true, user: null})
         } else {
-            // console.log(createUser({name: nickname}))
             callback({isUser: false, user: createUser({name: nickname})})
         }
     })
+
+    // MAIN_CHAT SOCKET
     socket.on(COMMUNITY_CHAT, (data) => {
-        io.io.to(connectedUsers[data.reciever]["id"]).emit(COMMUNITY_CHAT, data);
-        addMessage(data)
-        
-    })
-    socket.on(USER_CONNECTED, (name) =>  {
-        connectedUsers = updateId({name, id: socket.id}); 
-        socket.emit(DATA_REQ, connectedUsers)
+        io.io.to(connectedUsers.users[data.reciever]["socketId"]).emit(COMMUNITY_CHAT, data);
     })
 
-    socket.on(DATA_REQ, (name, fn) => {
+    socket.on(USER_CONNECTED, (name) =>  {
+        updateId({name, id: socket.id});
+    })
+
+    socket.on(DATA_REQ, (name) => {
+
+        console.log(name)
         socket.emit(DATA_REQ, connectedUsers.users[name].connections); 
     })
 
-    function updateId(user) {
-        connectedUsers[user.name]["id"] = user.id;
-        return connectedUsers;
+    socket.on(UPDATE_DB, (data) => {
+        let s = data.sender, r = data.reciever; 
+        if(s > r) h = s+r; 
+        else h = r+s; 
+ 
+        connectedUsers.messages[h].push(data); 
+    })
+    const uuidv4 = require('uuid').v4;
+
+
+
+    function createUser({name = ""} = {}){
+        return {
+            id: uuidv4(), 
+            name, 
+            contacts: [] 
+        }
     }
-
-    function addMessage(data) {
-        connectedUsers[data.reciever]["msg"][data.sender].push(data);
-        connectedUsers[data.sender]["msg"][data.reciever].push(data);
-
+    
+    function updateId(user) {
+        connectedUsers.users[user.name]["socketId"] = user.id;
     }
 
     function removeUser(userList, username) {
