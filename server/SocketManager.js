@@ -1,5 +1,6 @@
 const io = require('./index.js')
-const { VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES, UPDATE_DB } = require('./constants/index')
+const User = require('./models/user')
+const { ADD_CONTACT, VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES, UPDATE_DB } = require('./constants/index')
 
 var connectedUsers = {
     users: {
@@ -47,9 +48,15 @@ function socket(socket) {
         updateId({name, id: socket.id});
     })
 
-    socket.on(DATA_REQ, (name) => {
+    socket.on(ADD_CONTACT, (name) => {
+        User.findOne({name}).then((user) => {
+            console.log(user); 
+        }).catch((err) => {
+            console.log(err); 
+        })
+    })
 
-        console.log(name)
+    socket.on(DATA_REQ, (name) => {
         socket.emit(DATA_REQ, connectedUsers.users[name].connections); 
     })
 
@@ -61,9 +68,6 @@ function socket(socket) {
         connectedUsers.messages[h].push(data); 
     })
     const uuidv4 = require('uuid').v4;
-
-
-
     function createUser({name = ""} = {}){
         return {
             id: uuidv4(), 

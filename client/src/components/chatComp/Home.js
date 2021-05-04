@@ -27,16 +27,17 @@ class Home extends React.Component {
 
   componentDidMount() { 
     let handle = localStorage.getItem('handle'); 
-    console.log("handle", handle)
     socket.emit(USER_CONNECTED, handle)
     this.props.actions.loadUsers(handle, this.props.dispatch); 
     
     socket.on('connect', () => {
       console.log("Socket io connected");
     })   
-    socket.on(COMMUNITY_CHAT, (msg) => {  
+    socket.on(COMMUNITY_CHAT, (msg) => {    
       let  new_data = this.state.data; 
+    
       new_data[msg.sender].push(msg); 
+      console.log(new_data)
       this.setState((prevState) => ({
         data: new_data
       }))

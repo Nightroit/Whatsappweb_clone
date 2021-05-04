@@ -1,6 +1,6 @@
 * {
-    /*overflow-y: scroll;*/
-/*overflow-x: hidden;*/
+    /* overflow-y: scroll;*/
+/*overflow-x: hidden; */
 }
 /* Scroll bar start--------------------------------------------------*/  
 ::-webkit-scrollbar {
@@ -21,8 +21,7 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #555; 
   }
-
-/* Scroll bar end----------------------------------------------------*/  
+ 
 
 
 

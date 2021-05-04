@@ -2,10 +2,11 @@ html {
     overflow-x: hidden !important;
 }
 .app {
+    background:#075E54;      
     display: grid; 
     place-items: center;
     height: 100vh;
-    background-color: #ddd;
+    /* background-color: #ddd; */
     overflow-x: hidden;
 }
 

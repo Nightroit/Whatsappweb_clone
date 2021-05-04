@@ -1,11 +1,13 @@
 const mongoose = require('mongoose'); 
 const Schema = mongoose.Schema; 
 const bcrypt = require('bcrypt'); 
+const contact = require('../models/contacts')
 
 const userSchema = new Schema({
     email: {type: String, unique: true, lowercase: true},
     password: String, 
-    handle: {type: String, unique: true}
+    handle: {type: String, unique: true}, 
+    contacts: [contact],
 });
 
 // On Save Hook, encrypt password`
