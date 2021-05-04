@@ -1,6 +1,6 @@
 const io = require('./index.js')
 const User = require('./models/user')
-const { ADD_CONTACT, VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES, UPDATE_DB } = require('./constants/index')
+const { SEARCH_USER, ADD_CONTACT, VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES, UPDATE_DB } = require('./constants/index')
 
 var connectedUsers = {
     users: {
@@ -47,7 +47,15 @@ function socket(socket) {
     socket.on(USER_CONNECTED, (name) =>  {
         updateId({name, id: socket.id});
     })
-
+    socket.on(SEARCH_USER, (handle, fn) => {
+        User.find({handle: handle}, (err, user) => {
+            let rel = []; 
+            user.map(e => {
+                rel.push({handle: e.handle, socketId: e.socketId})
+            })
+            fn(rel  )
+        })
+    })
     socket.on(ADD_CONTACT, (name) => {
         User.findOne({name}).then((user) => {
             console.log(user); 

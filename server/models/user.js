@@ -8,6 +8,7 @@ const userSchema = new Schema({
     password: String, 
     handle: {type: String, unique: true}, 
     contacts: [contact],
+    socketId: String
 });
 
 // On Save Hook, encrypt password`
@@ -22,12 +23,9 @@ userSchema.pre('save', function(next) {
         if(err) {return next(err)}; 
 
         // hash (encrypt) our password using the salt 
-
         bcrypt.hash(user.password, salt, function(err, hash) {
             if(err) {return next(err)}; 
-            
             // overwrite plain text password with encrypted password
-            
             user.password = hash; 
             next(); 
         });

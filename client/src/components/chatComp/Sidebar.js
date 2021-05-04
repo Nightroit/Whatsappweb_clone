@@ -1,9 +1,10 @@
 import React from 'react'
 import './Sidebar.css';
+import socket from '../../utils/socket'
+import {SEARCH_USER} from '../../utils/Events'
 import { Avatar, ClickAwayListener, IconButton } from "@material-ui/core"
-
 import SearchIcon from '@material-ui/icons/Search';
-
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ChatIcon from '@material-ui/icons/Chat';
@@ -12,45 +13,76 @@ import SidebarChat from './SidebarChat';
 
 
 class Sidebar extends React.Component {
+    constructor(props) {
+        super(props)
+    
+        this.state = {
+            search: false, 
+            result: []
+        }
+    }
+    
+    handleClick = () => {
+        this.setState((prevState) => ({
+            search: (!prevState.search)
+        }))
+        
+    }
+    handleInput = async (e) => {
+        let handle = e.target.value; 
+        let exists = await new Promise (resolve => {
+            socket.emit(SEARCH_USER, handle, data => {
+                resolve(data)
+            })
+        })
+
+        this.setState({
+            result: [...exists]
+        })
+        
+    }
     render() {
-    return (
-        <div className = "sidebar">
+        return (
+            <div className = "sidebar">
+                <div className = "sidebar__header">
+                    <Avatar 
+                        src = "https://lh3.googleusercontent.com/ogw/ADGmqu9KA8ibs9AXN3VT0CAGTZsFcyzR9lTC8jeNzLIX=s32-c-mo" 
+                    />
+                    <div className = "sidebar__headerRight">
+                        <IconButton > 
+                            <ChatIcon  />
+                        </ IconButton >
 
-            <div className = "sidebar__header">
-                <Avatar 
-                    src = "https://lh3.googleusercontent.com/ogw/ADGmqu9KA8ibs9AXN3VT0CAGTZsFcyzR9lTC8jeNzLIX=s32-c-mo" 
-                />
-                <div className = "sidebar__headerRight">
-                    <IconButton > 
-                        <ChatIcon  />
-                    </ IconButton >
+                        <IconButton > 
+                            <DonutLargeIcon />
+                        </ IconButton >
 
-                    <IconButton > 
-                        <DonutLargeIcon />
-                    </ IconButton >
+                        <IconButton > 
+                            <MoreVertIcon  />
+                        </ IconButton >
 
-                    <IconButton > 
-                        <MoreVertIcon  />
-                    </ IconButton >
-
+                    </div>
                 </div>
-            </div>
 
 
-            <div className = "sidebar__search">
-                <div className ="sidebar__searchContainer">
-                        <SearchOutlinedIcon/>
-                    <input type = "text"></input>
+                <div className = "sidebar__search">
+                    <div className ="sidebar__searchContainer">
+                            <SearchOutlinedIcon/>
+                        <input type = "text" onKeyDown = {e => (e.key == 'Enter') ? (this.handleInput(e)) : 1}></input>
+                    </div>
                 </div>
+                    
+                    <div className = "sidebar__chats">
+                        {
+                        this.state.search ? 
+                            this.state.result.map(e => <SidebarChat contact = {e.handle}/>)
+                        : this.props.users.map(e =>  <SidebarChat onClick = {() => {this.props.changeUser(e)}} contact = {e}/> )
+                        }
+                    </div>
+                <AddCircleIcon onClick = {this.handleClick}/>
+                    
             </div>
-
-            <button onClick = {this.fetchMessage} >Clicked</button>
-            <div className = "sidebar__chats">
-                {this.props.users.map(e =>  <SidebarChat onClick = {() => {this.props.changeUser(e)}} contact = {e}/> )}
-            </div>
-
-        </div>
-    )
+        )    
     }
 }
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import AddIcon from '@material-ui/icons/Add';
 import {COMMUNITY_CHAT, DATA_REQ, USER_CONNECTED, LOAD_MESSAGES, UPDATE_DB} from '../../utils/Events'
 import {connect} from 'react-redux'; 
 import './Home.css';
@@ -21,7 +22,8 @@ class Home extends React.Component {
       name: localStorage.getItem('handle'), 
       name_val: localStorage.getItem('handle'),
       reciever: "", 
-      loaded: false
+      loaded: false, 
+      search: false
     }
   }
 
@@ -95,7 +97,8 @@ class Home extends React.Component {
         {this.state.loaded ? (
           <>
               <Sidebar 
-              users = {this.state.users} 
+              search = {this.state.search}
+              users = {this.state.users}
               changeUser = {this.changeUser}/>
               <Chat 
               name = {this.state.name}
