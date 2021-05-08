@@ -51,7 +51,7 @@ class Signin extends React.Component {
                                     <h3>{this.props.errorMessage}</h3>
                                 </div>
                                 <div class="login">
-                                    <button class="btn">Submit</button>
+                                    <button class="btn">    </button>
                                 </div>                     
                                 <div class="create-btn">
                                     <button class="loginbtn" onClick = {() => this.props.Click(false)}>Create account</button>

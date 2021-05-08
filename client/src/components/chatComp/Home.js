@@ -1,5 +1,4 @@
 import React from 'react';
-import AddIcon from '@material-ui/icons/Add';
 import {COMMUNITY_CHAT, DATA_REQ, USER_CONNECTED, LOAD_MESSAGES, UPDATE_DB} from '../../utils/Events'
 import {connect} from 'react-redux'; 
 import './Home.css';
@@ -7,8 +6,6 @@ import Chat from './Chat.js';
 import Sidebar from './Sidebar';
 import socket from '../../utils/socket'
 import * as actions from '../../actions/index'
-import axios from 'axios'
-import users from '../../reducers/users';
 
 class Home extends React.Component {
 
@@ -76,6 +73,9 @@ class Home extends React.Component {
   }
 
   sendMessage = (msg) => {
+    // let data = new Message({
+    //   handle1: this.state.handle, 
+    // })
     let idx = this.state.message; 
     idx = this.state.message[idx.length-1].messageId;
     let data = {msg, reciever: this.state.reciever, sender: this.state.handle, messageId: idx+1} 

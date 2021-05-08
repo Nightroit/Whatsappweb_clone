@@ -3,7 +3,6 @@ import './Sidebar.css';
 import socket from '../../utils/socket'
 import {SEARCH_USER, ADD_CONTACTS} from '../../utils/Events'
 import { Avatar, ClickAwayListener, IconButton } from "@material-ui/core"
-import SearchIcon from '@material-ui/icons/Search';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
@@ -41,7 +40,6 @@ class Sidebar extends React.Component {
     }
 
     addContact = (e) => {
-
         let data = {
             target: e.handle, 
             handle: this.props.currentUser, 

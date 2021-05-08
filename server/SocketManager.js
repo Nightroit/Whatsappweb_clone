@@ -1,7 +1,8 @@
 const io = require('./index.js')
 const User = require('./models/user')
+const Message = require('./models/Message')
 const { SEARCH_USER, ADD_CONTACTS, VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES, UPDATE_DB } = require('./constants/index')
-const { use } = require('passport')
+
 
 var connectedUsers = {
     users: {
@@ -54,17 +55,21 @@ function socket(socket) {
             user.map(e => {
                 rel.push({handle: e.handle, socketId: e.socketId})
             })
-            fn(rel  )
+            fn(rel )
         })
     })
     socket.on(ADD_CONTACTS, (e) => {
-        console.log(e)
         User.findOne({handle: e.handle}).then((user) => {
             user.contacts.push({handle: e.target, socketId: e.socketId}) 
             user.save(); 
         }).catch((err) => {
             console.log(err); 
         })
+        let message = new Message({
+            handle1: e.handle, 
+            handle2: e.target, 
+        })
+        message.save()
     })
 
     socket.on(DATA_REQ, (name) => {
