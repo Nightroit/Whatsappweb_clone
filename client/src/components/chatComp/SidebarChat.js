@@ -17,7 +17,7 @@ class SidebarChat extends React.Component {
             <Avatar />
                 {/* {this.props.add :} */}
                 <div className = "sidebarChat__info">
-                    <h2>{this.props.contact}</h2>
+                    <h2>{this.props.contact.handle}</h2>
                     {/* <p>{this.props.contact.lastMessage}</p> */}
                 </div>
            

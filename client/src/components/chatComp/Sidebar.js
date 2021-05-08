@@ -1,7 +1,7 @@
 import React from 'react'
 import './Sidebar.css';
 import socket from '../../utils/socket'
-import {SEARCH_USER} from '../../utils/Events'
+import {SEARCH_USER, ADD_CONTACTS} from '../../utils/Events'
 import { Avatar, ClickAwayListener, IconButton } from "@material-ui/core"
 import SearchIcon from '@material-ui/icons/Search';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
@@ -35,12 +35,21 @@ class Sidebar extends React.Component {
                 resolve(data)
             })
         })
-
         this.setState({
             result: [...exists]
         })
-        
     }
+
+    addContact = (e) => {
+
+        let data = {
+            target: e.handle, 
+            handle: this.props.currentUser, 
+            socketId: e.socketId
+        }
+        socket.emit(ADD_CONTACTS, data);     
+    }
+
     render() {
         return (
             <div className = "sidebar">
@@ -75,7 +84,7 @@ class Sidebar extends React.Component {
                     <div className = "sidebar__chats">
                         {
                         this.state.search ? 
-                            this.state.result.map(e => <SidebarChat contact = {e.handle}/>)
+                            this.state.result.map(e => <SidebarChat contact = {e} onClick = {() => {this.addContact(e)}}/>)
                         : this.props.users.map(e =>  <SidebarChat onClick = {() => {this.props.changeUser(e)}} contact = {e}/> )
                         }
                     </div>

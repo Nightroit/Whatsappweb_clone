@@ -1,6 +1,7 @@
 const io = require('./index.js')
 const User = require('./models/user')
-const { SEARCH_USER, ADD_CONTACT, VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES, UPDATE_DB } = require('./constants/index')
+const { SEARCH_USER, ADD_CONTACTS, VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES, UPDATE_DB } = require('./constants/index')
+const { use } = require('passport')
 
 var connectedUsers = {
     users: {
@@ -56,16 +57,28 @@ function socket(socket) {
             fn(rel  )
         })
     })
-    socket.on(ADD_CONTACT, (name) => {
-        User.findOne({name}).then((user) => {
-            console.log(user); 
+    socket.on(ADD_CONTACTS, (e) => {
+        console.log(e)
+        User.findOne({handle: e.handle}).then((user) => {
+            user.contacts.push({handle: e.target, socketId: e.socketId}) 
+            user.save(); 
         }).catch((err) => {
             console.log(err); 
         })
     })
 
     socket.on(DATA_REQ, (name) => {
-        socket.emit(DATA_REQ, connectedUsers.users[name].connections); 
+        console.log()
+        User.findOne({handle: name}).then((user, err) => {
+            if(user) { 
+                let data = {
+                    handle: user.handle, 
+                    contacts: user.contacts
+                }
+                socket.emit(DATA_REQ, data)
+            }
+            else socket.emit(DATA_REQ, err) 
+        })       
     })
 
     socket.on(UPDATE_DB, (data) => {

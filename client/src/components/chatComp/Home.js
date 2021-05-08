@@ -17,10 +17,9 @@ class Home extends React.Component {
   
     this.state = {
       data: [],
-      users: [], 
+      contacts: [], 
       message: [], 
-      name: localStorage.getItem('handle'), 
-      name_val: localStorage.getItem('handle'),
+      handle: "", 
       reciever: "", 
       loaded: false, 
       search: false
@@ -39,27 +38,31 @@ class Home extends React.Component {
       let  new_data = this.state.data; 
     
       new_data[msg.sender].push(msg); 
-      console.log(new_data)
       this.setState((prevState) => ({
         data: new_data
       }))
     })
     socket.on(DATA_REQ, (data) => {
       this.setState((prevState) => ({
-        users: [...data], 
-        name_val: prevState.name, 
-      }), async () => {
-         let res = await axios.post('http://localhost:3090/loadmsg', {
-          users: this.state.users,
-          name: this.state.name
-        }); 
-          this.setState((prevState) => ({
-            loaded: true, 
-            message: res.data[prevState.users[0]], 
-            data: res.data, 
-            reciever: prevState.users[0]
-          })) 
+        contacts: [...data.contacts], 
+        handle: data.handle, 
+      }))
+      this.setState({
+        loaded: true
       })
+      console.log(this.state.contacts)
+      // async () => {
+      //    let res = await axios.post('http://localhost:3090/loadmsg', {
+      //     users: this.state.users,
+      //     name: this.state.name
+      //   }); 
+      //     this.setState((prevState) => ({
+      //       loaded: true, 
+      //       message: res.data[prevState.users[0]], 
+      //       data: res.data, 
+      //       reciever: prevState.users[0]
+      //     })) 
+      // })
     })
     socket.on(LOAD_MESSAGES, (messages) => {
       // console.log(messages); 
@@ -75,7 +78,7 @@ class Home extends React.Component {
   sendMessage = (msg) => {
     let idx = this.state.message; 
     idx = this.state.message[idx.length-1].messageId;
-    let data = {msg, reciever: this.state.reciever, sender: this.state.name_val, messageId: idx+1} 
+    let data = {msg, reciever: this.state.reciever, sender: this.state.handle, messageId: idx+1} 
     let new_data = this.state.data; 
     new_data[this.state.reciever].push(data);
     this.setState({data: new_data})
@@ -98,8 +101,9 @@ class Home extends React.Component {
           <>
               <Sidebar 
               search = {this.state.search}
-              users = {this.state.users}
-              changeUser = {this.changeUser}/>
+              users = {this.state.contacts}
+              changeUser = {this.changeUser}
+              currentUser = {this.state.handle}/>
               <Chat 
               name = {this.state.name}
               className = "chat" 
