@@ -1,9 +1,7 @@
 const mongoose = require('mongoose'); 
+const user = require('./user')
 const Schema = mongoose.Schema; 
 
-const contactSchema = new Schema({
-    handle: String,
-    socketId: String,  
-})
+const contactSchema = new Schema()
 
 module.exports = contactSchema; 

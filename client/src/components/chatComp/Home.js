@@ -1,11 +1,12 @@
 import React from 'react';
-import {COMMUNITY_CHAT, DATA_REQ, USER_CONNECTED, LOAD_MESSAGES, UPDATE_DB} from '../../utils/Events'
+import {COMMUNITY_CHAT, DATA_REQ, USER_CONNECTED, LOAD_MESSAGES, UPDATE_DB, SEND_MESSAGE} from '../../utils/Events'
 import {connect} from 'react-redux'; 
 import './Home.css';
 import Chat from './Chat.js';
 import Sidebar from './Sidebar';
 import socket from '../../utils/socket'
 import * as actions from '../../actions/index'
+import { HighlightSharp } from '@material-ui/icons';
 
 class Home extends React.Component {
 
@@ -34,10 +35,10 @@ class Home extends React.Component {
     socket.on(COMMUNITY_CHAT, (msg) => {    
       let  new_data = this.state.data; 
     
-      new_data[msg.sender].push(msg); 
-      this.setState((prevState) => ({
-        data: new_data
-      }))
+      // new_data[msg.sender].push(msg); 
+      // this.setState((prevState) => ({
+      //   data: new_data
+      // }))
     })
     socket.on(DATA_REQ, (data) => {
       this.setState((prevState) => ({
@@ -73,17 +74,16 @@ class Home extends React.Component {
   }
 
   sendMessage = (msg) => {
-    // let data = new Message({
-    //   handle1: this.state.handle, 
-    // })
-    let idx = this.state.message; 
-    idx = this.state.message[idx.length-1].messageId;
-    let data = {msg, reciever: this.state.reciever, sender: this.state.handle, messageId: idx+1} 
-    let new_data = this.state.data; 
-    new_data[this.state.reciever].push(data);
-    this.setState({data: new_data})
-    socket.emit(UPDATE_DB, data); 
-    socket.emit(COMMUNITY_CHAT, data) 
+    let data = {
+      message: msg, 
+      sender: this.state.handle, 
+      reciever: this.state.reciever
+    }
+    // socket.emit(SEND_MESSAGE, data)
+    // new_data[this.state.reciever].push(data);
+    // this.setState({data: new_data})
+    // socket.emit(UPDATE_DB, data); 
+    // socket.emit(COMMUNITY_CHAT, data) 
   }
 
   changeUser = (e) => {

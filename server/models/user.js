@@ -7,7 +7,10 @@ const userSchema = new Schema({
     email: {type: String, unique: true, lowercase: true},
     password: String, 
     handle: {type: String, unique: true}, 
-    contacts: [contact],
+    contacts: [{
+        type: Schema.Types.ObjectId, 
+        ref: 'user'
+    }],
     socketId: String
 });
 

@@ -47,7 +47,14 @@ function socket(socket) {
     })
 
     socket.on(USER_CONNECTED, (name) =>  {
-        updateId({name, id: socket.id});
+        User.findOne({handle: name}).then((user, err) => {
+            if(user) {
+                user.socketId = socket.id
+                user.save().then(user => {
+                    console.log(user)
+                })
+            } 
+        })  
     })
     socket.on(SEARCH_USER, (handle, fn) => {
         User.find({handle: handle}, (err, user) => {
@@ -59,17 +66,27 @@ function socket(socket) {
         })
     })
     socket.on(ADD_CONTACTS, (e) => {
-        User.findOne({handle: e.handle}).then((user) => {
-            user.contacts.push({handle: e.target, socketId: e.socketId}) 
-            user.save(); 
-        }).catch((err) => {
-            console.log(err); 
+        console.log(e)
+        User.findOne({handle: e.target}).then((user) => {
+            // console.log()
+            user.contacts.push(user._id) 
+            user.save().then(user => {
+                user.contacts.map(e => {
+                    User.find(e).then(e => {
+                        console.log(e.handle)
+                    })
+                })
+            }); 
+            
         })
-        let message = new Message({
-            handle1: e.handle, 
-            handle2: e.target, 
-        })
-        message.save()
+        // .catch((err) => {
+        //     console.log(err); 
+        // })
+        // let message = new Message({
+        //     handle1: e.handle, 
+        //     handle2: e.target, 
+        // })
+        // message.save()
     })
 
     socket.on(DATA_REQ, (name) => {
