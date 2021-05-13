@@ -41,6 +41,7 @@ class Home extends React.Component {
       // }))
     })
     socket.on(DATA_REQ, (data) => {
+      console.log(data)
       this.setState((prevState) => ({
         contacts: [...data.contacts], 
         handle: data.handle, 
@@ -87,6 +88,7 @@ class Home extends React.Component {
   }
 
   changeUser = (e) => {
+    console.log(e); 
     this.setState((prevState) => ({
       message: prevState.data[e], 
       reciever: e
@@ -103,7 +105,7 @@ class Home extends React.Component {
               search = {this.state.search}
               users = {this.state.contacts}
               changeUser = {this.changeUser}
-              currentUser = {this.state.handle}/>
+              handle = {this.state.handle}/>
               <Chat 
               name = {this.state.name}
               className = "chat" 

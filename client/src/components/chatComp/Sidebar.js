@@ -42,10 +42,11 @@ class Sidebar extends React.Component {
     addContact = (e) => {
         let data = {
             target: e.handle, 
-            handle: this.props.currentUser, 
-            socketId: e.socketId
+            handle: this.props.handle
         }
-        socket.emit(ADD_CONTACTS, data);     
+        console.log(data);
+        console.log(this.props)
+        socket.emit(ADD_CONTACTS, data); 
     }
 
     render() {

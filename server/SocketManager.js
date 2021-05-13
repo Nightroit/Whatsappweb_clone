@@ -1,5 +1,6 @@
 const io = require('./index.js')
 const User = require('./models/user')
+let mainUser; 
 const Message = require('./models/Message')
 const { SEARCH_USER, ADD_CONTACTS, VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES, UPDATE_DB } = require('./constants/index')
 
@@ -22,12 +23,10 @@ var connectedUsers = {
     messages: {        // In future will make address this using hashing, just for the sake of JUGAAD rn ;P
         "ShivamDivyank": [
             {msg: "Hi, Divyank", reciever: "Divyank", sender: "Shivam", messageId: 1},
-            {msg: "Hi, Shivam", reciever: "Shivam", sender: "Divyank", messageId: 2}
-                        ], 
+            {msg: "Hi, Shivam", reciever: "Shivam", sender: "Divyank", messageId: 2}], 
         "ShivamDhurba": [
             {msg: "Hi, Dhurba", reciever: "Dhurba", sender: "Shivam", messageId: 1},
-            {msg: "Hi, Shivam", reciever: "Shivam", sender: "Dhurba", messageId: 2}
-        ]
+            {msg: "Hi, Shivam", reciever: "Shivam", sender: "Dhurba", messageId: 2}]
     }
 }
 
@@ -48,12 +47,11 @@ function socket(socket) {
 
     socket.on(USER_CONNECTED, (name) =>  {
         User.findOne({handle: name}).then((user, err) => {
+            mainUser = user; 
             if(user) {
                 user.socketId = socket.id
-                user.save().then(user => {
-                    console.log(user)
-                })
-            } 
+                user.save()
+            }
         })  
     })
     socket.on(SEARCH_USER, (handle, fn) => {
@@ -62,36 +60,27 @@ function socket(socket) {
             user.map(e => {
                 rel.push({handle: e.handle, socketId: e.socketId})
             })
-            fn(rel )
+            fn(rel)
         })
     })
     socket.on(ADD_CONTACTS, (e) => {
-        console.log(e)
-        User.findOne({handle: e.target}).then((user) => {
-            // console.log()
-            user.contacts.push(user._id) 
-            user.save().then(user => {
-                user.contacts.map(e => {
-                    User.find(e).then(e => {
-                        console.log(e.handle)
-                    })
-                })
+        if(!mainUser.contacts.find(ele => ele.handle == e.target)) {
+            mainUser.contacts.push({handle: e.target}) 
+            mainUser.save().catch((err) => {
+                console.log(err); 
             }); 
-            
-        })
-        // .catch((err) => {
-        //     console.log(err); 
-        // })
-        // let message = new Message({
-        //     handle1: e.handle, 
-        //     handle2: e.target, 
-        // })
-        // message.save()
+    
+            let message = new Message({
+                handle1: e.handle, 
+                handle2: e.target, 
+            })
+            message.save()
+        }
     })
 
     socket.on(DATA_REQ, (name) => {
-        console.log()
         User.findOne({handle: name}).then((user, err) => {
+            mainUser = user; 
             if(user) { 
                 let data = {
                     handle: user.handle, 
