@@ -1,7 +1,6 @@
 const mongoose = require('mongoose'); 
 const Schema = mongoose.Schema; 
 const bcrypt = require('bcrypt'); 
-const contact = require('../models/contacts')
 
 const userSchema = new Schema({
     email: {type: String, unique: true, lowercase: true},
@@ -10,9 +9,6 @@ const userSchema = new Schema({
     contacts: [{handle: String}],
     socketId: String
 });
-
-// On Save Hook, encrypt password`
-// Before saving a model, run this function
 
 userSchema.pre('save', function(next) {
     // get access to the user model 

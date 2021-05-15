@@ -63,33 +63,45 @@ function socket(socket) {
             fn(rel)
         })
     })
+
     socket.on(ADD_CONTACTS, (e) => {
         if(!mainUser.contacts.find(ele => ele.handle == e.target)) {
             mainUser.contacts.push({handle: e.target}) 
             mainUser.save().catch((err) => {
                 console.log(err); 
             }); 
-    
-            let message = new Message({
-                handle1: e.handle, 
-                handle2: e.target, 
-            })
-            message.save()
         }
     })
 
     socket.on(DATA_REQ, (name) => {
+        let data; 
         User.findOne({handle: name}).then((user, err) => {
-            mainUser = user; 
-            if(user) { 
-                let data = {
-                    handle: user.handle, 
-                    contacts: user.contacts
-                }
-                socket.emit(DATA_REQ, data)
+            mainUser = user;    
+            data = {
+                contacts: [...user.contacts], 
+                socketId: socket.id
             }
-            else socket.emit(DATA_REQ, err) 
-        })       
+            user.socketId = socket.id; 
+            user.save().then(() => {
+                socket.emit(DATA_REQ, data); 
+            })
+        })
+        // console.log(mainUser)
+        // User.findOne({handle: name}).then((user, err) => {
+        //     Message.findOne({name}).then(user => {
+
+        //     })
+        //     if(user) { 
+        //         let data = {
+        //             handle: user.handle, 
+        //             contacts: user.contacts, 
+        //             message: []
+        //         }
+        //         socket.emit(DATA_REQ, data)
+        //     }
+        //     else socket.emit(DATA_REQ, err) 
+        // })       
+
     })
 
     socket.on(UPDATE_DB, (data) => {
@@ -106,21 +118,6 @@ function socket(socket) {
             name, 
             contacts: [] 
         }
-    }
-    
-    function updateId(user) {
-        connectedUsers.users[user.name]["socketId"] = user.id;
-    }
-
-    function removeUser(userList, username) {
-        let newList = Object.assign({}, userList)
-        delete newList[username]; 
-        return newList
-    }
-
-
-    function isUser(userList, username) {
-        return username in userList;
     }
 }
 

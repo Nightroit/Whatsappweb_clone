@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import axios from 'axios'
 import {COMMUNITY_CHAT, DATA_REQ, USER_CONNECTED, LOAD_MESSAGES, UPDATE_DB, SEND_MESSAGE} from '../../utils/Events'
 import {connect} from 'react-redux'; 
 import './Home.css';
@@ -16,7 +17,7 @@ class Home extends React.Component {
     this.state = {
       data: [],
       contacts: [], 
-      message: [], 
+      messages: [], 
       handle: "", 
       reciever: "", 
       loaded: false, 
@@ -24,31 +25,26 @@ class Home extends React.Component {
     }
   }
 
-  componentDidMount() { 
-    let handle = localStorage.getItem('handle'); 
-    socket.emit(USER_CONNECTED, handle)
-    this.props.actions.loadUsers(handle, this.props.dispatch); 
-    
+  componentWillMount() { 
+    let handle = localStorage.getItem('handle');
+    const data = axios.post('http://localhost:3090/load',
+                              {handle}, 
+                              {headers: {Authorization: `Bearer ${this.props.state.auth.authenticated}`}}
+                              );
+
+    socket.emit(DATA_REQ, handle); 
     socket.on('connect', () => {
       console.log("Socket io connected");
-    })   
-    socket.on(COMMUNITY_CHAT, (msg) => {    
-      let  new_data = this.state.data; 
-    
-      // new_data[msg.sender].push(msg); 
-      // this.setState((prevState) => ({
-      //   data: new_data
-      // }))
-    })
+    }) 
     socket.on(DATA_REQ, (data) => {
       console.log(data)
-      this.setState((prevState) => ({
-        contacts: [...data.contacts], 
-        handle: data.handle, 
-      }))
-      this.setState({
-        loaded: true
-      })
+      // this.setState((prevState) => ({
+      //   contacts: [...data.contacts], 
+      //   handle: data.handle, 
+      // }))
+      // this.setState({
+      //   loaded: true
+      // })
       console.log(this.state.contacts)
       // async () => {
       //    let res = await axios.post('http://localhost:3090/loadmsg', {
@@ -64,13 +60,6 @@ class Home extends React.Component {
       // })
     })
     socket.on(LOAD_MESSAGES, (messages) => {
-      // console.log(messages); 
-      // this.setState({
-      //   messages:messages, 
-      //   loaded: true, 
-      // }, () => {
-      //   console.log(this.state.messages)
-      // })
     })
   }
 
@@ -88,11 +77,10 @@ class Home extends React.Component {
   }
 
   changeUser = (e) => {
-    console.log(e); 
     this.setState((prevState) => ({
       message: prevState.data[e], 
       reciever: e
-    })) 
+    }));
   }
   
   render() {
@@ -110,7 +98,8 @@ class Home extends React.Component {
               name = {this.state.name}
               className = "chat" 
               sendMessage = {this.sendMessage}  
-              message = {this.state.message}/>
+              />
+              {/* message = {this.state.message} */}
             </>
             ) : ''
           }

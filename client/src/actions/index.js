@@ -2,16 +2,7 @@ import axios from 'axios';
 import socket from '../utils/socket'
 import {DATA_REQ, LOAD_USERS, USER_CONNECTED } from '../utils/Events'
 import { AUTH_USER, AUTH_ERROR } from './types'
-export const sendMessage = (msg, det) => ({
-    message: msg,
-    sender: det.sender, 
-    reciever: det.reciever
-})
-
-export const loadUsers = (name, dispatch) => { 
-    socket.emit(DATA_REQ, name); 
-} 
-
+import { ScreenLockLandscapeTwoTone } from '@material-ui/icons';
 
 export const signup = (formProps, callback) => async dispatch => {
     try {
