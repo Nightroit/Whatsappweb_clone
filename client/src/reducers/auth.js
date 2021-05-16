@@ -12,7 +12,7 @@ export default function(state = INITIAL_STATE, action) {
             // console.log(action.payload)
             return {...state, authenticated: action.payload.token, handle: action.payload.handle}; 
         case AUTH_ERROR: 
-            return {...state, errorMessage: action.payload}; 
+            return {...state, errorMessage: action.payload.error}; 
         default: 
             return state; 
     }

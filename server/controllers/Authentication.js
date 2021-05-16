@@ -22,12 +22,13 @@ exports.signin = function(req, res, next) {
     }
     var token; 
     User.findOne({email: email}, function(err, user) {
-        console.log(user)
         if(err) {
             next(error); 
         }
-        if(user)
+        if(user) {
+            console.log(user);
             return res.json({token: tokenForUser(user), handle: user['handle']})
+        } 
         return res.json({error: "No such user exists!" }); 
     })
 }

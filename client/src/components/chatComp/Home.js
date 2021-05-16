@@ -1,8 +1,10 @@
 import React, {useEffect} from 'react';
-import axios from 'axios'
-import {COMMUNITY_CHAT, DATA_REQ, USER_CONNECTED, LOAD_MESSAGES, UPDATE_DB, SEND_MESSAGE} from '../../utils/Events'
+import './styles/Home.css';
+
+import {COMMUNITY_CHAT, DATA_REQ, USER_CONNECTED, LOAD_MESSAGES, UPDATE_DB, SEND_MESSAGE, LOAD_PROFILE} from '../../utils/Events'
 import {connect} from 'react-redux'; 
-import './Home.css';
+
+
 import Chat from './Chat.js';
 import Sidebar from './Sidebar';
 import socket from '../../utils/socket'
@@ -27,39 +29,28 @@ class Home extends React.Component {
 
   componentWillMount() { 
     let handle = localStorage.getItem('handle');
-    const data = axios.post('http://localhost:3090/load',
-                              {handle}, 
-                              {headers: {Authorization: `Bearer ${this.props.state.auth.authenticated}`}}
-                              );
+    console.log(handle);
+    // const data = axios.post('http://localhost:3090/load',
+    //                           {handle}, 
+    //                           {headers: {Authorization: `Bearer ${this.props.state.auth.authenticated}`}}
+    //                           );
 
-    socket.emit(DATA_REQ, handle); 
+    socket.emit(LOAD_PROFILE, handle); 
     socket.on('connect', () => {
       console.log("Socket io connected");
     }) 
-    socket.on(DATA_REQ, (data) => {
+    socket.on(LOAD_PROFILE, (data) => {
       console.log(data)
-      // this.setState((prevState) => ({
-      //   contacts: [...data.contacts], 
-      //   handle: data.handle, 
-      // }))
-      // this.setState({
-      //   loaded: true
-      // })
-      console.log(this.state.contacts)
-      // async () => {
-      //    let res = await axios.post('http://localhost:3090/loadmsg', {
-      //     users: this.state.users,
-      //     name: this.state.name
-      //   }); 
-      //     this.setState((prevState) => ({
-      //       loaded: true, 
-      //       message: res.data[prevState.users[0]], 
-      //       data: res.data, 
-      //       reciever: prevState.users[0]
-      //     })) 
-      // })
+      this.setState((prevState) => ({
+        contacts: [...data.contacts], 
+        handle: data.handle, 
+      }))
+      this.setState({
+        loaded: true
+      })
     })
     socket.on(LOAD_MESSAGES, (messages) => {
+      console.log(messages); 
     })
   }
 

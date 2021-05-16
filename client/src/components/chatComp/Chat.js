@@ -1,14 +1,19 @@
 import React, {useState} from 'react'
-import "./Chat.css"
+import "./styles/Chat.css"
+
+// Material UI ----------------------------------------------------------------------------------
 import { Avatar, IconButton } from "@material-ui/core"
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import MoodIcon from '@material-ui/icons/Mood';
-import MicNoneIcon from '@material-ui/icons/MicNone';
-import Message from './components/Message';
 
-    
+// Material UI ----------------------------------------------------------------------------------
+
+// Components -----------------------------------------------------------------------------------
+import Message from './components/Message';
+import Loaded from './components/Loaded'
+// Components -----------------------------------------------------------------------------------
+
 class Chat extends React.Component {
     constructor(props) {
         super(props)
@@ -27,6 +32,16 @@ class Chat extends React.Component {
     }
 
     render() {
+        // let loaded = (
+       
+        //     )
+        let loading = (
+            <div className = "chat__body">
+                <svg class="spinner" width="65px" height="65px"  viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+                </svg>
+            </div>
+        )
         return (
             <div className = "chat" >
                 <div className = "chat__header">
@@ -49,34 +64,12 @@ class Chat extends React.Component {
                     <IconButton>
                         <MoreVertIcon/>
                     </IconButton>
-
+                    
                     </div>
-                </div>  
-
-                <div className = "chat__body">
-                    {this.props.message.map(e => {
-                    return      <Message
-                                name = {this.props.name} 
-                                message = {e} 
-                                sended = {this.state.sended}/>
-                                })}
-                </div>
-
-                <div className = "chat__footer">
-                    <IconButton>
-                        <MoodIcon/>
-                    </IconButton>
-                    <form onSubmit = {this.handleSubmit}>
-                        <input value = {this.state.message}  onChange = {(e) => this.setState({message: e.target.value})} placeholder = "Type a message" type = "text">
-                        </input>
-                            <button  type = "submit"></button>
-                    </form> 
-                    <IconButton>
-                        <MicNoneIcon />
-                    </IconButton>
-
-                </div>
-
+                </div> 
+                {}
+                {(this.props.message) ? 1: loading}
+                
             </div>
         )
     }

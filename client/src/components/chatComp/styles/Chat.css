@@ -1,6 +1,6 @@
 * {
     /* overflow-y: scroll;*/
-/*overflow-x: hidden; */
+overflow-x: hidden;
 }
 /* Scroll bar start--------------------------------------------------*/  
 ::-webkit-scrollbar {
@@ -29,7 +29,6 @@
     display: flex;
     flex-direction: column;
     flex: 0.65;
-    
 }
 
 .chat__header {
@@ -52,7 +51,7 @@
 
 .chat__body {
     flex: 1;
-    background-image: url('./1.png');
+    background-image: url('./bg_img.png');
     background-repeat: repeat;
     background-position: center;
     padding: 30px;
@@ -116,3 +115,97 @@
     color: grey; 
 }
 
+
+.spinner {
+    margin-left: 45%; 
+    height: 100%;
+    -webkit-animation: rotator 1.4s linear infinite;
+            animation: rotator 1.4s linear infinite;
+  }
+  
+  @-webkit-keyframes rotator {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(270deg);
+    }
+  }
+  
+  @keyframes rotator {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(270deg);
+    }
+  }
+  .path {
+    stroke-dasharray: 187;
+    stroke-dashoffset: 0;
+    transform-origin: center;
+    -webkit-animation: dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite;
+            animation: dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite;
+  }
+  
+  @-webkit-keyframes colors {
+    0% {
+      stroke: #075E54;
+    }
+    25% {
+      stroke: #075E54;
+    }
+    50% {
+      stroke: #075E54;
+    }
+    75% {
+      stroke: #075E54;
+    }
+    100% {
+      stroke: #075E54;
+    }
+  }
+  
+  @keyframes colors {
+    0% {
+      stroke: #075E54;
+    }
+    25% {
+      stroke: #075E54;
+    }
+    50% {
+      stroke: #075E54;
+    }
+    75% {
+      stroke: #075E54;
+    }
+    100% {
+      stroke: #075E54;
+    }
+  }
+  @-webkit-keyframes dash {
+    0% {
+      stroke-dashoffset: 187;
+    }
+    50% {
+      stroke-dashoffset: 46.75;
+      transform: rotate(135deg);
+    }
+    100% {
+      stroke-dashoffset: 187;
+      transform: rotate(450deg);
+    }
+  }
+  @keyframes dash {
+    0% {
+      stroke-dashoffset: 187;
+    }
+    50% {
+      stroke-dashoffset: 46.75;
+      transform: rotate(135deg);
+    }
+    100% {
+      stroke-dashoffset: 187;
+      transform: rotate(450deg);
+    }
+  }

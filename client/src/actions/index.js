@@ -26,8 +26,12 @@ export const signin = (formProps, callback) => async dispatch => {
             'http://localhost:3090/signin', 
              formProps
             );
-        dispatch({type: AUTH_USER, payload: {token: response.data.token, handle: response.data.handle}})
-        localStorage.setItem('token', response.data.token); 
+        if(response.data.error) {
+            dispatch({type: AUTH_ERROR, payload: {error: response.data.error}})
+        } else {
+            dispatch({type: AUTH_USER, payload: {token: response.data.token, handle: response.data.handle}})
+            localStorage.setItem('token', response.data.token); 
+        }
         callback(); 
     } 
     catch (err) {

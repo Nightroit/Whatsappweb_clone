@@ -1,8 +1,9 @@
 const io = require('./index.js')
 const User = require('./models/user')
+const Messages = require('./models/message')
 let mainUser; 
-const Message = require('./models/Message')
-const { SEARCH_USER, ADD_CONTACTS, VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES, UPDATE_DB } = require('./constants/index')
+const { LOAD_PROFILE, SEARCH_USER, ADD_CONTACTS, VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES, UPDATE_DB } = require('./constants/index');
+const { Socket } = require('socket.io');
 
 
 var connectedUsers = {
@@ -71,10 +72,10 @@ function socket(socket) {
                 console.log(err); 
             }); 
         }
+        console.log(e); 
     })
 
-    socket.on(DATA_REQ, (name) => {
-        let data; 
+    socket.on(LOAD_PROFILE, (name) => {
         User.findOne({handle: name}).then((user, err) => {
             mainUser = user;    
             data = {
@@ -83,7 +84,19 @@ function socket(socket) {
             }
             user.socketId = socket.id; 
             user.save().then(() => {
-                socket.emit(DATA_REQ, data); 
+                socket.emit(LOAD_PROFILE, data); 
+                user.contacts.map(e => {
+                    if(e.handle < name) handle1 = e.handle
+                    else handle1 = name; 
+                    console.log(handle1)
+                    Messages.findOne({handle1: handle1}, (err, data) => {
+                        data = {
+                            handle: e.handle, 
+                            messages: data.messages
+                        }
+                        socket.emit(LOAD_MESSAGES, {data});
+                    })
+                })
             })
         })
         // console.log(mainUser)

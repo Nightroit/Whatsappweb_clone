@@ -1,5 +1,5 @@
 import React from 'react'
-import './Sidebar.css';
+import './styles/Sidebar.css';
 import socket from '../../utils/socket'
 import {SEARCH_USER, ADD_CONTACTS} from '../../utils/Events'
 import { Avatar, ClickAwayListener, IconButton } from "@material-ui/core"
