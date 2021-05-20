@@ -3,8 +3,7 @@ const textMessage = require('./textMessage');
 const Schema = mongoose.Schema; 
 
 const messageSchema = new Schema({
-    handle1: String, 
-    handle2: String, 
+    key: String, 
     messages: [textMessage],
     time : { type : Date, default: Date.now }
 })

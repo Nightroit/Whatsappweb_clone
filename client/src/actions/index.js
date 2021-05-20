@@ -1,8 +1,7 @@
 import axios from 'axios'; 
 import socket from '../utils/socket'
-import {DATA_REQ, LOAD_USERS, USER_CONNECTED } from '../utils/Events'
+import {DATA_REQ, LOAD_USERS, SEND_MESSAGE, USER_CONNECTED } from '../utils/Events'
 import { AUTH_USER, AUTH_ERROR } from './types'
-import { ScreenLockLandscapeTwoTone } from '@material-ui/icons';
 
 export const signup = (formProps, callback) => async dispatch => {
     try {
@@ -38,6 +37,7 @@ export const signin = (formProps, callback) => async dispatch => {
         dispatch({type: AUTH_ERROR, payload: 'Invalid login credential'});
     }
 };
+
 
 export const signout = () => {
     localStorage.removeItem('token'); 

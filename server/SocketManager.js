@@ -2,35 +2,21 @@ const io = require('./index.js')
 const User = require('./models/user')
 const Messages = require('./models/message')
 let mainUser; 
-const { LOAD_PROFILE, SEARCH_USER, ADD_CONTACTS, VERIFY_USER, USER_CONNECTED, LOGOUT, COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES, UPDATE_DB } = require('./constants/index');
-const { Socket } = require('socket.io');
-
-
-var connectedUsers = {
-    users: {
-        "Shivam": {
-                connections: ["Dhurba", "Divyank"], 
-                socketId: '', 
-            }, 
-            "Dhurba": {
-                connections: ["Prateek", "Ritesh"], 
-                socketId: '', 
-            }, 
-            "Divyank": {
-                connections: ["Shivam"],
-                socketId: '', 
-            }
-    },
-    messages: {        // In future will make address this using hashing, just for the sake of JUGAAD rn ;P
-        "ShivamDivyank": [
-            {msg: "Hi, Divyank", reciever: "Divyank", sender: "Shivam", messageId: 1},
-            {msg: "Hi, Shivam", reciever: "Shivam", sender: "Divyank", messageId: 2}], 
-        "ShivamDhurba": [
-            {msg: "Hi, Dhurba", reciever: "Dhurba", sender: "Shivam", messageId: 1},
-            {msg: "Hi, Shivam", reciever: "Shivam", sender: "Dhurba", messageId: 2}]
-    }
-}
-
+let userMessages = [];
+const { LOAD_PROFILE, 
+        SEARCH_USER, 
+        ADD_CONTACTS, 
+        VERIFY_USER, 
+        USER_CONNECTED, 
+        LOGOUT, 
+        COMMUNITY_CHAT, 
+        DATA_REQ, 
+        LOAD_MESSAGES, 
+        UPDATE_DB, 
+        SEND_MESSAG, 
+        SOCKET_ID, 
+        SEND_MESSAGE } = require('./constants/index');
+const hasher = require('./utils/hash')
 
 function socket(socket) {
     socket.on(VERIFY_USER, (nickname, callback) => {
@@ -55,6 +41,8 @@ function socket(socket) {
             }
         })  
     })
+
+
     socket.on(SEARCH_USER, (handle, fn) => {
         User.find({handle: handle}, (err, user) => {
             let rel = []; 
@@ -67,12 +55,20 @@ function socket(socket) {
 
     socket.on(ADD_CONTACTS, (e) => {
         if(!mainUser.contacts.find(ele => ele.handle == e.target)) {
+
             mainUser.contacts.push({handle: e.target}) 
             mainUser.save().catch((err) => {
                 console.log(err); 
             }); 
-        }
-        console.log(e); 
+
+            // Demo hashing function ------------------------------ 
+            let hash = hasher(mainUser.handle, e.target)
+            // Demo hashing function ------------------------------
+            const newModel = new Messages({
+                key: hash 
+            })
+            newModel.save(); 
+        }   
     })
 
     socket.on(LOAD_PROFILE, (name) => {
@@ -86,18 +82,30 @@ function socket(socket) {
             user.save().then(() => {
                 socket.emit(LOAD_PROFILE, data); 
                 user.contacts.map(e => {
-                    if(e.handle < name) handle1 = e.handle
-                    else handle1 = name; 
-                    console.log(handle1)
-                    Messages.findOne({handle1: handle1}, (err, data) => {
+                    let hash = hasher(e.handle, name)
+                    Messages.findOne({key: hash}, (err, data) => {
+                        userMessages.push(data);
                         data = {
                             handle: e.handle, 
                             messages: data.messages
                         }
                         socket.emit(LOAD_MESSAGES, {data});
                     })
+                    User.findOne({handle: e.handle}, (err, data) => {
+                        socket.emit(SOCKET_ID, {handle: data.handle, socketId: data.socketId}) 
+                    })
                 })
             })
+        })
+
+        socket.on(SEND_MESSAGE, (data) => {
+            let key = hasher(data.sender, data.reciever);
+            let user = userMessages.find((e) => e.key == key)
+            console.log(user);
+            user.messages.push(data); 
+            console.log(data); 
+            user.save()
+            io.io.to(data.socketId).emit(SEND_MESSAGE, {data}); 
         })
         // console.log(mainUser)
         // User.findOne({handle: name}).then((user, err) => {
@@ -117,21 +125,21 @@ function socket(socket) {
 
     })
 
-    socket.on(UPDATE_DB, (data) => {
-        let s = data.sender, r = data.reciever; 
-        if(s > r) h = s+r; 
-        else h = r+s; 
+    // socket.on(UPDATE_DB, (data) => {
+    //     let s = data.sender, r = data.reciever; 
+    //     if(s > r) h = s+r; 
+    //     else h = r+s; 
  
-        connectedUsers.messages[h].push(data); 
-    })
-    const uuidv4 = require('uuid').v4;
-    function createUser({name = ""} = {}){
-        return {
-            id: uuidv4(), 
-            name, 
-            contacts: [] 
-        }
-    }
+    //     connectedUsers.messages[h].push(data); 
+    // })
+    // const uuidv4 = require('uuid').v4;
+    // function createUser({name = ""} = {}){
+    //     return {
+    //         id: uuidv4(), 
+    //         name, 
+    //         contacts: [] 
+    //     }
+    // }
 }
 
-module.exports =  {connectedUsers, socket}
+module.exports =  {socket}

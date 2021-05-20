@@ -67,8 +67,7 @@ class Chat extends React.Component {
                     
                     </div>
                 </div> 
-                {}
-                {(this.props.message) ? 1: loading}
+                {(this.props.messages) ?  <Loaded sendMessage = {this.props.sendMessage} name = {this.props.reciever} messages = {this.props.messages}/> : loading}
                 
             </div>
         )

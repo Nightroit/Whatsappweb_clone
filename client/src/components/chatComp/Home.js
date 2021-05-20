@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import './styles/Home.css';
 
-import {COMMUNITY_CHAT, DATA_REQ, USER_CONNECTED, LOAD_MESSAGES, UPDATE_DB, SEND_MESSAGE, LOAD_PROFILE} from '../../utils/Events'
+import {COMMUNITY_CHAT, DATA_REQ, USER_CONNECTED, LOAD_MESSAGES, UPDATE_DB, SEND_MESSAGE, LOAD_PROFILE, SOCKET_ID} from '../../utils/Events'
 import {connect} from 'react-redux'; 
 
 
@@ -9,7 +9,7 @@ import Chat from './Chat.js';
 import Sidebar from './Sidebar';
 import socket from '../../utils/socket'
 import * as actions from '../../actions/index'
-import { HighlightSharp } from '@material-ui/icons';
+import { HighlightSharp, ThreeSixtySharp } from '@material-ui/icons';
 
 class Home extends React.Component {
 
@@ -19,59 +19,77 @@ class Home extends React.Component {
     this.state = {
       data: [],
       contacts: [], 
-      messages: [], 
+      messages: {}, 
       handle: "", 
       reciever: "", 
       loaded: false, 
-      search: false
+      search: false, 
+      sockets: {}
     }
   }
 
-  componentWillMount() { 
-    let handle = localStorage.getItem('handle');
-    console.log(handle);
+  componentWillMount() {
+    this.setState({
+      handle: localStorage.getItem('handle')
+    }, () => {
+      socket.emit(LOAD_PROFILE, this.state.handle); 
+    })
     // const data = axios.post('http://localhost:3090/load',
     //                           {handle}, 
     //                           {headers: {Authorization: `Bearer ${this.props.state.auth.authenticated}`}}
     //                           );
 
-    socket.emit(LOAD_PROFILE, handle); 
+    
     socket.on('connect', () => {
       console.log("Socket io connected");
     }) 
+
     socket.on(LOAD_PROFILE, (data) => {
-      console.log(data)
       this.setState((prevState) => ({
         contacts: [...data.contacts], 
-        handle: data.handle, 
       }))
       this.setState({
         loaded: true
       })
     })
-    socket.on(LOAD_MESSAGES, (messages) => {
-      console.log(messages); 
+    socket.on(SOCKET_ID, (data) => {
+      this.setState((prevState) => {
+        sockets: prevState.sockets[data.handle] = data.socketId
+      }, () => {
+        console.log(this.state.sockets)
+      })
+    })
+
+    socket.on(SEND_MESSAGE, (data) => {
+      console.log(data); 
+    })
+
+    socket.on(LOAD_MESSAGES, (msg) => {
+      let handle = msg.data.handle; 
+      this.setState((prevState) => {
+        messages: prevState.messages[handle] = msg.data.messages
+      })
     })
   }
 
   sendMessage = (msg) => {
+    msg.preventDefault(); 
     let data = {
-      message: msg, 
+      message: msg.target.msginp.value, 
       sender: this.state.handle, 
-      reciever: this.state.reciever
+      reciever: this.state.reciever, 
+      socketId: this.state.sockets[this.state.reciever]
     }
-    // socket.emit(SEND_MESSAGE, data)
-    // new_data[this.state.reciever].push(data);
-    // this.setState({data: new_data})
-    // socket.emit(UPDATE_DB, data); 
-    // socket.emit(COMMUNITY_CHAT, data) 
+    console.log(data); 
+    msg.target.msginp.value = ''
+    socket.emit(SEND_MESSAGE, (data));
   }
 
   changeUser = (e) => {
-    this.setState((prevState) => ({
-      message: prevState.data[e], 
-      reciever: e
-    }));
+    console.log(this.state.handle);
+    this.setState({
+      reciever: e.handle
+    });
   }
   
   render() {
@@ -86,11 +104,12 @@ class Home extends React.Component {
               changeUser = {this.changeUser}
               handle = {this.state.handle}/>
               <Chat 
-              name = {this.state.name}
               className = "chat" 
+              handle = {this.state.handle}
               sendMessage = {this.sendMessage}  
+              messages = {this.state.messages[this.state.reciever]}
               />
-              {/* message = {this.state.message} */}
+              {/* messages = {this.state.message} */}
             </>
             ) : ''
           }

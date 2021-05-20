@@ -11,7 +11,6 @@ export default ChildComponent => {
             this.shouldNavigateAway();
         }    
         shouldNavigateAway() {
-            console.log(this.props)
             if(!this.props.auth)
                 this.props.history.push('/');
             // else localStorage.setItem('handle', )

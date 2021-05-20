@@ -50,11 +50,10 @@ overflow-x: hidden;
 }
 
 .chat__body {
-    flex: 1;
     background-image: url('./bg_img.png');
     background-repeat: repeat;
     background-position: center;
-    padding: 30px;
+    height: 100%;
     overflow: scroll; 
 }
 

@@ -3,7 +3,6 @@ import {reduxForm, Field} from 'redux-form';
 import {compose} from 'redux'; 
 import {connect} from 'react-redux'; 
 import * as actions from '../../actions/index'
-import { Link } from 'react-router-dom';
 
 class Signin extends React.Component {
     onSubmit = (formProps) => {
