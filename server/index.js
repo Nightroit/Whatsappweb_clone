@@ -22,6 +22,11 @@ var io = module.exports.io = require('socket.io')(server, {
         origin: "http://localhost:3000"
     }
 }); 
+
+io.use((socket, next) => {
+    io.engine.generateId = () => socket.handshake.query.CustomId
+    next(null, true)
+  });
 io.on('connection', socket.socket)
 // Socket thing - end
 

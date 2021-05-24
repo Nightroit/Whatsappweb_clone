@@ -25,8 +25,8 @@ class Sidebar extends React.Component {
         this.setState((prevState) => ({
             search: (!prevState.search)
         }))
-        
     }
+    
     handleInput = async (e) => {
         let handle = e.target.value; 
         let exists = await new Promise (resolve => {
@@ -40,12 +40,13 @@ class Sidebar extends React.Component {
     }
 
     addContact = (e) => {
+        let target = this.state.result.find(user => user.handle === e.handle)
         let data = {
             target: e.handle, 
-            handle: this.props.handle
+            handle: this.props.handle,
+            socketId: target.socketId
         }
         console.log(data);
-        console.log(this.props)
         socket.emit(ADD_CONTACTS, data); 
     }
 

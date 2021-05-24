@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require('uuid');
+
 const jwt = require('jwt-simple'); 
 const User = require('../models/user')
 const config = require('../config.js')
@@ -20,14 +22,13 @@ exports.signin = function(req, res, next) {
         console.log("HERE")
         return res.send(200).send(error)
     }
-    var token; 
     User.findOne({email: email}, function(err, user) {
         if(err) {
             next(error); 
         }
         if(user) {
             console.log(user);
-            return res.json({token: tokenForUser(user), handle: user['handle']})
+            return res.json({token: tokenForUser(user), handle: user['handle'], socketId: user.socketId})
         } 
         return res.json({error: "No such user exists!" }); 
     })
@@ -62,7 +63,8 @@ exports.signup = function(req, res, next) {
         const user = new User({
             email: email, 
             password: password, 
-            handle: handle
+            handle: handle, 
+            socketId: uuidv4()
         })
         
         user.save(function(err) {

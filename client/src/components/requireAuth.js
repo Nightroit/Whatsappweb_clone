@@ -21,7 +21,10 @@ export default ChildComponent => {
     }
 
     function mapStateToProps(state) {
-        if(state.auth.handle) localStorage.setItem('handle', state.auth.handle)
+        if(state.auth.handle) { 
+            localStorage.setItem('handle', state.auth.handle)
+            localStorage.setItem('socketId', state.auth.socketId)
+        }    
         return {auth: state.auth.authenticated}; 
     }
 

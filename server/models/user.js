@@ -6,8 +6,8 @@ const userSchema = new Schema({
     email: {type: String, unique: true, lowercase: true},
     password: String, 
     handle: {type: String, unique: true}, 
-    contacts: [{handle: String}],
-    socketId: String
+    contacts: [{handle: String, socketId: String}],
+    socketId: Number
 });
 
 userSchema.pre('save', function(next) {

@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import './styles/Home.css';
 
-import {COMMUNITY_CHAT, DATA_REQ, USER_CONNECTED, LOAD_MESSAGES, UPDATE_DB, SEND_MESSAGE, LOAD_PROFILE, SOCKET_ID} from '../../utils/Events'
+import {COMMUNITY_CHAT, DATA_REQ, LOAD_MESSAGES, UPDATE_DB, SEND_MESSAGE, LOAD_PROFILE, SOCKET_ID} from '../../utils/Events'
 import {connect} from 'react-redux'; 
 
 
@@ -9,7 +9,6 @@ import Chat from './Chat.js';
 import Sidebar from './Sidebar';
 import socket from '../../utils/socket'
 import * as actions from '../../actions/index'
-import { HighlightSharp, ThreeSixtySharp } from '@material-ui/icons';
 
 class Home extends React.Component {
 
@@ -21,10 +20,9 @@ class Home extends React.Component {
       contacts: [], 
       messages: {}, 
       handle: "", 
-      reciever: "", 
+      reciever: {}, 
       loaded: false, 
       search: false, 
-      sockets: {}
     }
   }
 
@@ -42,9 +40,11 @@ class Home extends React.Component {
     
     socket.on('connect', () => {
       console.log("Socket io connected");
+      console.log(socket.id)
     }) 
 
     socket.on(LOAD_PROFILE, (data) => {
+      console.log(socket.id)
       this.setState((prevState) => ({
         contacts: [...data.contacts], 
       }))
@@ -55,40 +55,41 @@ class Home extends React.Component {
     socket.on(SOCKET_ID, (data) => {
       this.setState((prevState) => {
         sockets: prevState.sockets[data.handle] = data.socketId
-      }, () => {
-        console.log(this.state.sockets)
-      })
-    })
+      })})
 
     socket.on(SEND_MESSAGE, (data) => {
       console.log(data); 
     })
 
     socket.on(LOAD_MESSAGES, (msg) => {
-      let handle = msg.data.handle; 
+ 
+      let handle = msg.handle; 
       this.setState((prevState) => {
-        messages: prevState.messages[handle] = msg.data.messages
+        messages: prevState.messages[handle] = msg.messages
       })
     })
   }
 
   sendMessage = (msg) => {
-    msg.preventDefault(); 
+    // msg.preventDefault(); 
+    // let id = this.state.contacts.find(e => e.handle == this.state.reciever)
     let data = {
-      message: msg.target.msginp.value, 
+      message: msg, 
       sender: this.state.handle, 
-      reciever: this.state.reciever, 
-      socketId: this.state.sockets[this.state.reciever]
+      reciever: this.state.reciever.handle, 
+      socketId: this.state.reciever.socketId
     }
-    console.log(data); 
-    msg.target.msginp.value = ''
-    socket.emit(SEND_MESSAGE, (data));
+    // console.log(msg.value); 
+    // msg.target.msginp.value = ''
+    socket.emit(SEND_MESSAGE, data);
   }
 
   changeUser = (e) => {
-    console.log(this.state.handle);
     this.setState({
-      reciever: e.handle
+      reciever: {
+        handle: e.handle, 
+        socketId: e.socketId
+      }
     });
   }
   
@@ -107,7 +108,7 @@ class Home extends React.Component {
               className = "chat" 
               handle = {this.state.handle}
               sendMessage = {this.sendMessage}  
-              messages = {this.state.messages[this.state.reciever]}
+              messages = {this.state.messages[this.state.reciever.handle]}
               />
               {/* messages = {this.state.message} */}
             </>

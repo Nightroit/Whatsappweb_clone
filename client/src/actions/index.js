@@ -28,7 +28,8 @@ export const signin = (formProps, callback) => async dispatch => {
         if(response.data.error) {
             dispatch({type: AUTH_ERROR, payload: {error: response.data.error}})
         } else {
-            dispatch({type: AUTH_USER, payload: {token: response.data.token, handle: response.data.handle}})
+            console.log(response.data);
+            dispatch({type: AUTH_USER, payload: {token: response.data.token, handle: response.data.handle, socketId: response.data.socketId}})
             localStorage.setItem('token', response.data.token); 
         }
         callback(); 
