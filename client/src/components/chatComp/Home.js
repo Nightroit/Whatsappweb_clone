@@ -26,7 +26,7 @@ class Home extends React.Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.setState({
       handle: localStorage.getItem('handle')
     }, () => {
@@ -45,17 +45,13 @@ class Home extends React.Component {
 
     socket.on(LOAD_PROFILE, (data) => {
       console.log(socket.id)
-      this.setState((prevState) => ({
+      this.setState(({
         contacts: [...data.contacts], 
       }))
       this.setState({
         loaded: true
       })
     })
-    socket.on(SOCKET_ID, (data) => {
-      this.setState((prevState) => {
-        sockets: prevState.sockets[data.handle] = data.socketId
-      })})
 
     socket.on(SEND_MESSAGE, (data) => {
       console.log(data); 
@@ -87,8 +83,7 @@ class Home extends React.Component {
   changeUser = (e) => {
     this.setState({
       reciever: {
-        handle: e.handle, 
-        socketId: e.socketId
+        handle: e.handle
       }
     });
   }

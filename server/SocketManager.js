@@ -2,6 +2,7 @@ const io = require('./index.js')
 const User = require('./models/user')
 const Messages = require('./models/message')
 let mainUser; 
+let users = []; 
 let userMessages = [];
 const { LOAD_PROFILE, 
         SEARCH_USER, 
@@ -64,14 +65,32 @@ function socket(socket) {
 
 
         socket.on(LOAD_PROFILE, (name) => {
+            // console.log(users)
+            let bool = users.find((e) => {return e.handle === name})
+            console.log(bool)
+            if(bool) {
+                socket.emit(LOAD_PROFILE, bool.profile); 
+                bool.messages.map((e) => {
+                    socket.emit(LOAD_MESSAGES, e)
+                });
+            } else {
             User.findOne({handle: name}).then((user, err) => {
+                let DB_DATA = {
+                    handle: '', 
+                    profile: {}, 
+                    messages: []
+                }; 
+                user.socketId = socket.id; 
+                user.save()
                 mainUser = user;    
-                    data = {
+                    profile = {
                         contacts: [...user.contacts], 
                         socketId: user.socketId
                     }
-                    console.log(data);
-                    socket.emit(LOAD_PROFILE, data); 
+                    DB_DATA.handle = name;
+                    DB_DATA.profile = profile
+    
+                    socket.emit(LOAD_PROFILE, profile); 
                     user.contacts.map(e => {
                         let hash = hasher(e.handle, name)
                         Messages.findOne({key: hash}, (err, data) => {
@@ -80,21 +99,27 @@ function socket(socket) {
                                     handle: e.handle, 
                                     messages: data.messages
                                 }
+                                DB_DATA.messages.push(rel_data);
                         socket.emit(LOAD_MESSAGES, rel_data);
                     })
                 })
+                users.push(DB_DATA);
             })
+            }
         })
 
 
         socket.on(SEND_MESSAGE, (data) => {
             let key = hasher(data.sender, data.reciever);
-            // console.log(userMessages)
+            console.log(data)
             let user = userMessages.find((e) => e.key == key)
             user.messages.push(data); 
             user.save()
+            User.findOne({handle: data.reciever}, (err, data) => {
+                io.io.to(data.socketId).emit(SEND_MESSAGE, data);
+            })
             // console.log(socket.id);
-            io.io.to(socket.id).emit(SEND_MESSAGE, data); 
+             
         })
         // console.log(mainUser)    
         // User.findOne({handle: name}).then((user, err) => {

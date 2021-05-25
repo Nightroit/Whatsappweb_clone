@@ -23,10 +23,8 @@ var io = module.exports.io = require('socket.io')(server, {
     }
 }); 
 
-io.use((socket, next) => {
-    io.engine.generateId = () => socket.handshake.query.CustomId
-    next(null, true)
-  });
+
+
 io.on('connection', socket.socket)
 // Socket thing - end
 

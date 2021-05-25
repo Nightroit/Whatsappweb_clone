@@ -7,7 +7,7 @@ const userSchema = new Schema({
     password: String, 
     handle: {type: String, unique: true}, 
     contacts: [{handle: String, socketId: String}],
-    socketId: Number
+    socketId: String
 });
 
 userSchema.pre('save', function(next) {
