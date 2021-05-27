@@ -3,6 +3,7 @@ const User = require('./models/user')
 const Messages = require('./models/message')
 let mainUser; 
 let users = []; 
+let onlineUsers = {}; 
 let userMessages = [];
 const { LOAD_PROFILE, 
         SEARCH_USER, 
@@ -17,7 +18,8 @@ const { LOAD_PROFILE,
         SEND_MESSAG, 
         SOCKET_ID, 
         SEND_MESSAGE } = require('./constants/index');
-const hasher = require('./utils/hash')
+const hasher = require('./utils/hash');
+const { hash } = require('bcrypt');
 
 function socket(socket) {
 
@@ -65,20 +67,27 @@ function socket(socket) {
 
 
         socket.on(LOAD_PROFILE, (name) => {
-            // console.log(users)
             let bool = users.find((e) => {return e.handle === name})
-            console.log(bool)
             if(bool) {
                 socket.emit(LOAD_PROFILE, bool.profile); 
-                bool.messages.map((e) => {
-                    socket.emit(LOAD_MESSAGES, e)
-                });
+                onlineUsers[name] = socket.id
+                bool.profile.contacts.map(e => {
+                    let key = hasher(name, e.handle); 
+                    let rel = userMessages.find(e => {
+                        return e.key == key
+                    })
+                        let data = {
+                            handle: e.handle, 
+                            messages: rel.messages
+                        }
+                        console.log(rel)
+                        socket.emit(LOAD_MESSAGES, data)
+                }) 
             } else {
             User.findOne({handle: name}).then((user, err) => {
                 let DB_DATA = {
                     handle: '', 
-                    profile: {}, 
-                    messages: []
+                    profile: {}
                 }; 
                 user.socketId = socket.id; 
                 user.save()
@@ -89,7 +98,8 @@ function socket(socket) {
                     }
                     DB_DATA.handle = name;
                     DB_DATA.profile = profile
-    
+                    onlineUsers[name]= socket.id
+            
                     socket.emit(LOAD_PROFILE, profile); 
                     user.contacts.map(e => {
                         let hash = hasher(e.handle, name)
@@ -99,7 +109,7 @@ function socket(socket) {
                                     handle: e.handle, 
                                     messages: data.messages
                                 }
-                                DB_DATA.messages.push(rel_data);
+                                console.log(rel_data)
                         socket.emit(LOAD_MESSAGES, rel_data);
                     })
                 })
@@ -110,15 +120,17 @@ function socket(socket) {
 
 
         socket.on(SEND_MESSAGE, (data) => {
+            
             let key = hasher(data.sender, data.reciever);
-            console.log(data)
             let user = userMessages.find((e) => e.key == key)
             user.messages.push(data); 
-            user.save()
-            User.findOne({handle: data.reciever}, (err, data) => {
-                io.io.to(data.socketId).emit(SEND_MESSAGE, data);
+            user.save().then(e => {
+                console.log(e)
             })
-            // console.log(socket.id);
+            let id = onlineUsers[data.reciever]
+            let senderId = onlineUsers[data.sender]
+            io.io.to(id).emit(SEND_MESSAGE, data);
+            io.io.to(senderId).emit(SEND_MESSAGE, data);
              
         })
         // console.log(mainUser)    

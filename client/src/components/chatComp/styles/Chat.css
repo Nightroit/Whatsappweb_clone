@@ -64,7 +64,7 @@ overflow-x: hidden;
     width: fit-content;
     border-radius: 10px; 
     background-color: #ffffff;
-    margin-bottom: 30px;
+    margin: 20px;
 }
 
 .chat__name {

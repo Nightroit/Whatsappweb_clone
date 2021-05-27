@@ -44,47 +44,53 @@ class Home extends React.Component {
     }) 
 
     socket.on(LOAD_PROFILE, (data) => {
-      console.log(socket.id)
+      console.log(data)
       this.setState(({
-        contacts: [...data.contacts], 
-      }))
-      this.setState({
-        loaded: true
+        contacts: [...data.contacts]
+      }), () => {
+        this.setState({
+          loaded: true
+        })
       })
     })
 
-    socket.on(SEND_MESSAGE, (data) => {
-      console.log(data); 
-    })
 
     socket.on(LOAD_MESSAGES, (msg) => {
- 
-      let handle = msg.handle; 
+      
+      let handle = msg.handle
       this.setState((prevState) => {
         messages: prevState.messages[handle] = msg.messages
       })
+      if(msg.handle == this.state.contacts[0].handle) {
+        this.setState({
+          reciever: {
+            handle: msg.handle
+          }
+        })
+      }
     })
   }
 
+
   sendMessage = (msg) => {
-    // msg.preventDefault(); 
-    // let id = this.state.contacts.find(e => e.handle == this.state.reciever)
     let data = {
       message: msg, 
       sender: this.state.handle, 
       reciever: this.state.reciever.handle, 
       socketId: this.state.reciever.socketId
     }
-    // console.log(msg.value); 
-    // msg.target.msginp.value = ''
+    console.log(data)
     socket.emit(SEND_MESSAGE, data);
   }
 
   changeUser = (e) => {
+    
     this.setState({
       reciever: {
         handle: e.handle
       }
+    }, () => {
+      console.log(this.state.messages[this.state.reciever.handle])
     });
   }
   
@@ -104,8 +110,8 @@ class Home extends React.Component {
               handle = {this.state.handle}
               sendMessage = {this.sendMessage}  
               messages = {this.state.messages[this.state.reciever.handle]}
+              reciever = {this.state.handle}
               />
-              {/* messages = {this.state.message} */}
             </>
             ) : ''
           }

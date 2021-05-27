@@ -1,26 +1,18 @@
 import React from 'react'
 
 export default function Message({message, handle}) {
-
+console.log(handle)
     return (
         <div>
-                <p className = {`chat__message ${(message.sender === handle) && 'chat__reciever' }`}> 
+                <p className = {`chat__message ${(message.sender === handle) && "chat__reciever" }`}> 
                                 {/* <span className = "chat__name">{message.sender}</span>  */}
                                     {message.message}
                                             {/* {console.log.name()} */}
-                                <span className = "chat_    _timestamp">
+                                <span className = "chat__timestamp">
                                     {message.timestamp}
                                 </span> 
                 </p>
-                {/* ))}               {props.sended.map(message => ( */}
-                        {/* <p className = {`chat__message ${false && 'chat__reciever' }`}> */}
-                            {/* <span className = "chat__name">{message}</span> */}
-                                {/* {message.msg} */}
-                            {/* <span className = "chat__timestamp">
-                                {message.timestamp}
-                            </span> */}
-                        {/* </p> */}
-                {/* ))}                    */}
+                
         </div>
     )
 }

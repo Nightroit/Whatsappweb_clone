@@ -14,16 +14,31 @@ import Message from './components/Message';
 import Loaded from './components/Loaded'
 // Components -----------------------------------------------------------------------------------
 
+
+import socket from '../../utils/socket'
+import {SEND_MESSAGE} from '../../utils/Events'
+
 class Chat extends React.Component {
     constructor(props) {
         super(props)
     
         this.state = {
             message: '', 
-            sended: []
+            sended: [], 
+            socket: []
         }   
     }
-
+    componentDidMount() {
+        
+        socket.on(SEND_MESSAGE, (msg) => {
+            console.log(msg)
+            let handle = msg.handle
+            msg = [...this.state.socket, msg]
+            this.setState({
+                socket: msg
+              })
+          })
+    }
     handleSubmit = (e) => {
         e.preventDefault(); 
       
@@ -67,7 +82,7 @@ class Chat extends React.Component {
                     
                     </div>
                 </div> 
-                {(this.props.messages) ?  <Loaded sendMessage = {this.props.sendMessage} name = {this.props.reciever} messages = {this.props.messages}/> : loading}
+                {(this.props.messages) ?  <Loaded e = {this.state.socket} sendMessage = {this.props.sendMessage} name = {this.props.reciever} messages = {this.props.messages}/> : loading}
                 
             </div>
         )
