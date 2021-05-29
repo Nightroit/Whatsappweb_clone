@@ -9,6 +9,7 @@ import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ChatIcon from '@material-ui/icons/Chat';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SidebarChat from './SidebarChat';
+import { TransferWithinAStationRounded } from '@material-ui/icons';
 
 
 class Sidebar extends React.Component {
@@ -17,7 +18,8 @@ class Sidebar extends React.Component {
     
         this.state = {
             search: false, 
-            result: []
+            result: [], 
+            inputVal: ''
         }
     }
     
@@ -28,15 +30,21 @@ class Sidebar extends React.Component {
     }
     
     handleInput = async (e) => {
-        let handle = e.target.value; 
-        let exists = await new Promise (resolve => {
-            socket.emit(SEARCH_USER, handle, data => {
-                resolve(data)
+        if(e.type == 'change') {
+            this.setState({
+                inputVal: e.target.value
             })
-        })
-        this.setState({
-            result: [...exists]
-        })
+        } else {
+            let handle = e.target.value; 
+            let exists = await new Promise (resolve => {
+                socket.emit(SEARCH_USER, handle, data => {
+                    resolve(data)
+                })
+            })
+            this.setState({
+                result: [...exists],
+            })
+        }
     }
 
     addContact = (e) => {
@@ -61,15 +69,12 @@ class Sidebar extends React.Component {
                         <IconButton > 
                             <ChatIcon  />
                         </ IconButton >
-
                         <IconButton > 
                             <DonutLargeIcon />
                         </ IconButton >
-
                         <IconButton > 
                             <MoreVertIcon  />
                         </ IconButton >
-
                     </div>
                 </div>
 
@@ -77,14 +82,21 @@ class Sidebar extends React.Component {
                 <div className = "sidebar__search">
                     <div className ="sidebar__searchContainer">
                             <SearchOutlinedIcon/>
-                        <input type = "text" onKeyDown = {e => (e.key == 'Enter') ? (this.handleInput(e)) : 1}></input>
+                        <input type = "text" value = {this.state.inputVal} onChange = {this.handleInput} onKeyDown = {e => (e.key == 'Enter') ? (this.handleInput(e)) : 1}></input>
+
                     </div>
                 </div>
                     
                     <div className = "sidebar__chats">
+                        
+                        {
+                            (this.state.search && this.state.inputVal === '') ? (<SidebarChat contact = {{handle: 'Search for a user...'}} 
+                            />) : ''
+                        }
                         {
                         this.state.search ? 
-                            this.state.result.map(e => <SidebarChat contact = {e} onClick = {() => {this.addContact(e)}}/>)
+                            this.state.result.map(e => <SidebarChat contact = {e} onClick = {() => {this.addContact(e)}}
+                            />)
                         : this.props.users.map(e =>  <SidebarChat onClick = {() => {this.props.changeUser(e)}} contact = {e}/> )
                         }
                     </div>

@@ -18,7 +18,7 @@ class Signin extends React.Component {
                 <div class="container">
                     <div class="row justify-content-between">
                         <div class="content-left">
-                        <h1>Whatsapp Web</h1>
+                            <h1>Whatsapp Web</h1>
                             <h2>clone by nightroit</h2>
                         </div>
                         <div class="content-right">
@@ -50,7 +50,7 @@ class Signin extends React.Component {
                                     <h3>{this.props.errorMessage}</h3>
                                 </div>
                                 <div class="login">
-                                    <button class="btn">    </button>
+                                    <button class="btn">Sign In</button>
                                 </div>                     
                                 <div class="create-btn">
                                     <button class="loginbtn" onClick = {() => this.props.Click(false)}>Create account</button>

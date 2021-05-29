@@ -3,19 +3,35 @@ import socket from '../utils/socket'
 import {DATA_REQ, LOAD_USERS, SEND_MESSAGE, USER_CONNECTED } from '../utils/Events'
 import { AUTH_USER, AUTH_ERROR } from './types'
 
-export const signup = (formProps, callback) => async dispatch => {
-    try {
-        const response = await axios.post(
-            'http://localhost:3090/signup', 
-             formProps
-            );
+export const clearRedux = () => async dispatch => {
+    dispatch({type: AUTH_ERROR, payload: {error: ''}})
+}
 
-        dispatch({type: AUTH_USER, payload: {token: response.data.token, handle: response.data.handle}})
-        localStorage.setItem('token', response.data.token); 
-        callback(); 
-    } 
-    catch (err) {
-        dispatch({type: AUTH_ERROR, payload: 'Email in use'});
+export const signup = (formProps, callback) => async dispatch => {
+        if(formProps.password != formProps.confirmPassword) {
+            dispatch({type: AUTH_ERROR, payload: {error: 'Password didn\'t match!'}})
+            return;
+        }
+         if(formProps.email && formProps.email && formProps.handle) {
+        try {
+            console.log(formProps)
+            const response = await axios.post(
+                'http://localhost:3090/signup', 
+                formProps
+                );
+                if(response) {
+                    console.log(response)
+                    dispatch({type: AUTH_USER, payload: {token: response.data.token, handle: response.data.handle}})
+                    localStorage.setItem('token', response.data.token); 
+                    localStorage.setItem('handle', response.data.handle); 
+                }
+            callback(); 
+        } 
+        catch (err) {
+            dispatch({type: AUTH_ERROR, payload: {error: 'Email in use'}});
+        }
+    } else {
+        dispatch({type: AUTH_ERROR, payload: {error: 'All terms are not filled!'}})
     }
 };
 

@@ -26,7 +26,6 @@ ReactDOM.render(
     <Provider store = {store}> 
         <BrowserRouter>
             <App>
-                <Route path = "/" exact component = {Welcome} />
                 <Route path = "/signup" exact component = {Signup} /> 
                 <Route path = "/home" exact component = {Feature} />
                 <Route path = "/signout" exact component = {Signout} />

@@ -4,13 +4,7 @@ import { Avatar } from "@material-ui/core"
 
     
 class SidebarChat extends React.Component {
-    constructor(props) {
-        super(props)
-    
-        this.state = {
-             
-        }
-    }
+
     render() {
         return (
             <div className = "sidebarChat" onClick = {this.props.onClick}>

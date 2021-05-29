@@ -10,5 +10,3 @@ function hasher(h1, h2) {
     }
     return hash; 
 }
-
-module.exports = hasher; 

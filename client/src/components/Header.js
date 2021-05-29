@@ -15,6 +15,7 @@ class Header extends Component {
         }
     }
     handleClick = (e) => {
+        this.props.clearRedux();
         this.setState((prev) => ({
             bool: e, 
         }))

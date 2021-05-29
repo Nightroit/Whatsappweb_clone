@@ -3,6 +3,7 @@
 	margin: 0;
 	padding: 0;
 	outline: 0;
+	overflow: hidden;
 	text-decoration: none;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -18,6 +19,7 @@ body{
 	background: #090e11;
 }
 .loginsignup{
+
 	padding: 120px;
 }
 .container{
@@ -33,12 +35,14 @@ body{
 	justify-content: space-between;
 }
 .content-left{
-	max-width: 500px;
-	margin: auto;
+	margin-top: 50px;
+	/* max-width: 50px; */
+	/* margin: auto; */
+	color: #ffffff;
 }
 .content-left h1{
 	font-size: 50px;
-	color: #1877f2;
+	color: #ffffff;
 	margin-bottom: 20px;
 	font-weight: 900;
 }
@@ -48,8 +52,17 @@ body{
 	font-weight: 500;
 	margin-bottom: 40px;
 }
+.form-group {
+	height: 60px; 
+	margin-bottom: 1px;
+}
+.signupForm {
+	height: 60px; 
+	margin-bottom: -5px;
+}
+
 .content-right{
-	max-width: 450px;
+	max-width: 400px;
 	margin: auto;
 	text-align: center;
 }
@@ -65,10 +78,10 @@ body{
 	-webkit-box-shadow: -1px -1px 8px -1px rgba(0,0,0,0.52);
 	-moz-box-shadow: -1px -1px 8px -1px rgba(0,0,0,0.52);
 	box-shadow: -1px -1px 8px -1px rgba(0,0,0,0.52);
-	margin-bottom: 30px;
+	margin-bottom: 170px !important;
 }
 .content-right form input{
-	width: 100%;
+	width: 100vw;
 	height: 50px;
 	font-size: 17px;
 	border: 1px solid #ddd;
@@ -80,11 +93,21 @@ body{
 	/* border: 2px solid #1c1e21; */
 	background: #f0f2f5;
 }
-.btn{
+.errorMessage {
+	position: absolute;
+	color: red; 
+	margin: 0;
+	left: 950px;
+	/* margin-top: 10px !important; */
+	/* position: relative;  */
+}
+
+.btn {
+
+	margin-top: 20px; 
 	font-size: 20px;
     width: 350px;
-	background: #128C7E
-	;
+	background: #128C7E;
 	height: 50px;
     border: none;
 	color: #fff;
@@ -93,10 +116,36 @@ body{
 	margin-bottom: 20px;
 	text-transform: capitalize;
 }
+
+
+.content-right form{
+	width: 400px;
+	height: 350px;
+	background: #fff;
+	border-radius: 5px;
+	padding: 15px;
+	-webkit-box-shadow: -1px -1px 8px -1px rgba(0,0,0,0.52);
+	-moz-box-shadow: -1px -1px 8px -1px rgba(0,0,0,0.52);
+	box-shadow: -1px -1px 8px -1px rgba(0,0,0,0.52);
+	margin-bottom: 30px;
+}
+.btnsignIn{
+	margin-top: -10px;
+	font-size: 20px;
+    width: 220px;
+	background: #5a8f89;
+	height: 30px;
+    border: none;
+	color: #fff;
+	border-radius: 5px;
+	/* margin-bottom: 20px; */
+	text-transform: capitalize;
+}
 p {
 	color: black;
 }
-.loginbtn{
+.loginbtn {
+	margin-top: 10px;
 	font-size: 20px;
     width: 200px;
 	background: #5a8f89;
@@ -108,6 +157,12 @@ p {
 	margin-bottom: 20px;
 	text-transform: capitalize;
 }
+.loginbtn1 {
+	color: #fff;
+	border: none;
+	text-transform: capitalize;
+}
+
 .login a{
 	display: block;
 }
@@ -146,3 +201,4 @@ h3 {
 button {
 	cursor: pointer; 
 }
+

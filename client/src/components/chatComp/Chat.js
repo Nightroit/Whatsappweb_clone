@@ -6,7 +6,6 @@ import { Avatar, IconButton } from "@material-ui/core"
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-
 // Material UI ----------------------------------------------------------------------------------
 
 // Components -----------------------------------------------------------------------------------
@@ -47,9 +46,6 @@ class Chat extends React.Component {
     }
 
     render() {
-        // let loaded = (
-       
-        //     )
         let loading = (
             <div className = "chat__body">
                 <svg class="spinner" width="65px" height="65px"  viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">

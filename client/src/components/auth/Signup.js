@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 class Signup extends React.Component {
     onSubmit = (formProps) => {
+ 
         this.props.signup(formProps, () => {
             // this.props.history.push('/features'); 
         });
@@ -21,11 +22,11 @@ class Signup extends React.Component {
                 <div class="row justify-content-between">
                     <div class="content-left">
                             <h1>Whatsapp Web</h1>
-                            <h2>clone by nightroit</h2>
+                            <h2 >clone by nightroit</h2>
                     </div>
-                    <div class="content-right">
+                    <div class="content-right signupgroup">
                             <form onSubmit = {handleSubmit(this.onSubmit)}>
-                                <div class="form-group">
+                                <div class="form-group signupForm">
                                     <fieldset className = "fieldset">
                                         <Field 
                                             name = 'email'
@@ -35,7 +36,7 @@ class Signup extends React.Component {
                                             />
                                     </fieldset>            
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group signupForm">
                                     <fieldset  className = "fieldset">
                                         <Field 
                                             name = 'password'
@@ -45,7 +46,17 @@ class Signup extends React.Component {
                                             />
                                     </fieldset>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group signupForm">
+                                    <fieldset  className = "fieldset">
+                                        <Field 
+                                            name = 'confirmPassword'
+                                            type = 'password'
+                                            component = 'input'
+                                            placeholder = 'Conrim password'
+                                            />
+                                    </fieldset>
+                                </div>
+                                <div class="form-group signupForm">
                                     <fieldset  className = "fieldset">
                                         <Field 
                                             name = 'handle'
@@ -55,16 +66,16 @@ class Signup extends React.Component {
                                             />
                                     </fieldset>
                                 </div>
-                                <div>
-                                    {this.props.errorMessage}
+                                <div class = "errorMessage">
+                                   <h4>{this.props.errorMessage}</h4> 
                                 </div>
                                 <div class="login">
                                     <button class="btn">Submit</button>
-                                </div>                     
-                                <div class="create-btn">
-                                <p>Already a user?</p>
-                                    <a targe = "#"  onClick = {() => this.props.Click(true)}>signin</a>
-                                </div>
+                                </div>    
+                        
+                                 <button class = "btnsignIn" onClick = {() => this.props.Click(true)}>Or Sign in?</button>
+                                
+                                   
                             </form>
                              </div>
                         </div>
