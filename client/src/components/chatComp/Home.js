@@ -32,11 +32,6 @@ class Home extends React.Component {
     }, () => {
       socket.emit(LOAD_PROFILE, this.state.handle); 
     })
-    // const data = axios.post('http://localhost:3090/load',
-    //                           {handle}, 
-    //                           {headers: {Authorization: `Bearer ${this.props.state.auth.authenticated}`}}
-    //                           );
-
     
     socket.on('connect', () => {
       console.log("Socket io connected");
@@ -44,7 +39,6 @@ class Home extends React.Component {
     }) 
 
     socket.on(LOAD_PROFILE, (data) => {
-      console.log(data)
       this.setState(({
         contacts: [...data.contacts]
       }), () => {
@@ -79,7 +73,6 @@ class Home extends React.Component {
       reciever: this.state.reciever.handle, 
       socketId: this.state.reciever.socketId
     }
-    console.log(data)
     socket.emit(SEND_MESSAGE, data);
   }
 
@@ -89,8 +82,6 @@ class Home extends React.Component {
       reciever: {
         handle: e.handle
       }
-    }, () => {
-      console.log(this.state.messages[this.state.reciever.handle])
     });
   }
   

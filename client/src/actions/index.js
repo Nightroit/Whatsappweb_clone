@@ -14,13 +14,12 @@ export const signup = (formProps, callback) => async dispatch => {
         }
          if(formProps.email && formProps.email && formProps.handle) {
         try {
-            console.log(formProps)
             const response = await axios.post(
                 'http://localhost:3090/signup', 
                 formProps
                 );
                 if(response) {
-                    console.log(response)
+        
                     dispatch({type: AUTH_USER, payload: {token: response.data.token, handle: response.data.handle}})
                     localStorage.setItem('token', response.data.token); 
                     localStorage.setItem('handle', response.data.handle); 
@@ -44,7 +43,7 @@ export const signin = (formProps, callback) => async dispatch => {
         if(response.data.error) {
             dispatch({type: AUTH_ERROR, payload: {error: response.data.error}})
         } else {
-            console.log(response.data);
+    
             dispatch({type: AUTH_USER, payload: {token: response.data.token, handle: response.data.handle, socketId: response.data.socketId}})
             localStorage.setItem('token', response.data.token); 
         }

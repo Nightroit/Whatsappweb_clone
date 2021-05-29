@@ -13,21 +13,20 @@ exports.signin = function(req, res, next) {
     let error = [];
     const email = req.body.email; 
     const password = req.body.password; 
-    console.log(req.body)
+    
     if(!email) 
         error.push("User field cannot be empty") 
     if(!password) 
         error.push('Password field cannot be empty'); 
     if(error.length!=0) {
-        console.log("HERE")
-        return res.send(200).send(error)
+            return res.send(200).send(error)
     }
     User.findOne({email: email}, function(err, user) {
         if(err) {
             next(error); 
         }
         if(user) {
-            console.log(user);
+        
             return res.json({token: tokenForUser(user), handle: user['handle'], socketId: user.socketId})
         } 
         return res.json({error: "No such user exists!" }); 

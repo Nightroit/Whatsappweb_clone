@@ -28,9 +28,8 @@ class Chat extends React.Component {
         }   
     }
     componentDidMount() {
-        
+
         socket.on(SEND_MESSAGE, (msg) => {
-            console.log(msg)
             let handle = msg.handle
             msg = [...this.state.socket, msg]
             this.setState({

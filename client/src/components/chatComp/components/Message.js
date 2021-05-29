@@ -1,7 +1,6 @@
 import React from 'react'
 
 export default function Message({message, handle}) {
-console.log(handle)
     return (
         <div>
                 <p className = {`chat__message ${(message.sender === handle) && "chat__reciever" }`}> 
